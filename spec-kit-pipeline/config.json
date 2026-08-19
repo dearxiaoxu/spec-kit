@@ -1,6 +1,6 @@
 {
-  "project_root": "/Users/xiaoxu/Desktop/移动办公/spec-kit-pipeline",
-  "autotest_dir": "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest",
+  "project_root": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline",
+  "autotest_dir": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest",
   "target": {
     "base_url": "https://106.54.60.191",
     "openapi_path": "/api/v1/openapi.json"
@@ -15,10 +15,15 @@
     "static_scan": {
       "enabled": true,
       "dirs": [
-        "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest"
+        "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest"
       ],
       "external_cmd": null,
-      "skip_dirs": ["node_modules", ".git", "reports", "test-results"]
+      "skip_dirs": [
+        "node_modules",
+        ".git",
+        "reports",
+        "test-results"
+      ]
     },
     "pattern_regression": {
       "enabled": true,
@@ -27,7 +32,7 @@
     },
     "e2e_regression": {
       "enabled": true,
-      "autotest_dir": "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest",
+      "autotest_dir": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest",
       "script": "test:api",
       "report_file": "reports/test-results.json",
       "min_pass_rate": 0.95,

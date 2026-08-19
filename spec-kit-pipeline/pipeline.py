@@ -101,41 +101,16 @@ def write_report(results: List[GateResult], config: Dict) -> str:
     return json_path
 
 
-def fetch_contract(config: Dict, token: str = "") -> None:
-    """拉取目标站 OpenAPI 存为 assets/contract/current.json"""
-    import ssl
-    import urllib.request
-
-    target = config.get("target", {})
-    base_url = target.get("base_url", "https://106.54.60.191")
-    openapi_path = target.get("openapi_path", "/api/v1/openapi.json")
-    out_dir = os.path.join(config.get("project_root", "."), config.get("gates", {}).get("contract_diff", {}).get("snapshot_dir", "assets/contract"))
-    os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, "current.json")
-
-    url = base_url.rstrip("/") + "/" + openapi_path.lstrip("/")
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE  # 自签名证书豁免
-
-    headers = {"Accept": "application/json"}
+def fetch_contract(config: Dict, token: str = "", auto_login: bool = False) -> None:
+    """拉取目标站 OpenAPI 存为 assets/contract/current.json（委托 tools/fetch_contract.py）"""
+    import subprocess
+    tool = os.path.join(config.get("project_root", "."), "tools", "fetch_contract.py")
+    cmd = ["/opt/homebrew/bin/python3", tool]
     if token:
-        headers["Authorization"] = f"Bearer {token}"
-
-    print(f"[FETCH] GET {url}" + ("（带 Bearer token）" if token else ""))
-    try:
-        req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, context=ctx, timeout=15) as resp:
-            spec = json.loads(resp.read().decode("utf-8"))
-    except Exception as e:
-        print(f"[FETCH] 失败: {e}")
-        print("[FETCH] 提示: 目标站 OpenAPI 可能需认证（/api/v1/openapi.json 返回 401），可加 --token 或设环境变量 SPEC_KIT_TOKEN 后重试；也可手工准备契约 JSON。")
-        sys.exit(2)
-
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(spec, f, ensure_ascii=False, indent=2)
-    version = (spec.get("info") or {}).get("version", "?")
-    print(f"[FETCH] OK -> {out_path} (version={version})")
+        cmd += ["--token", token]
+    if auto_login:
+        cmd += ["--auto-login"]
+    subprocess.run(cmd, cwd=config.get("project_root", "."))
 
 
 def main() -> int:
@@ -146,6 +121,8 @@ def main() -> int:
     parser.add_argument("--fetch-contract", action="store_true", help="拉取目标站 OpenAPI 到 current.json")
     parser.add_argument("--token", default=os.environ.get("SPEC_KIT_TOKEN", ""),
                         help="拉取契约用的 Bearer token（优先读环境变量 SPEC_KIT_TOKEN；凭据不入库）")
+    parser.add_argument("--auto-login", action="store_true",
+                        help="--fetch-contract 时从 spec-kit-autotest/.env 读账号自动登录拿 token")
     parser.add_argument("--script", help="覆盖 e2e_regression 的 npm script（如 test:unit 快速验证）")
     parser.add_argument("--stage", help="按阶段筛选（骨架阶段仅提示，不做过滤）")
     args = parser.parse_args()
@@ -165,7 +142,7 @@ def main() -> int:
         return 0
 
     if args.fetch_contract:
-        fetch_contract(config, token=args.token)
+        fetch_contract(config, token=args.token, auto_login=args.auto_login)
         return 0
 
     # 选择要跑的门禁

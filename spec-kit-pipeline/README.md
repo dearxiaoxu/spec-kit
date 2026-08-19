@@ -10,26 +10,74 @@
                     ◄──── 根因回填（缺陷模式库扩容，越跑越准）────┘
 ```
 
-## 快速开始
+## 运行启动顺序
+
+> 环境前提（已实测确认）：
+> - **Python**：用 `/opt/homebrew/bin/python3`（3.14）；`~/.workbuddy` 下的 managed/venv python 因缺 libpython 动态库不可用
+> - **Node/Playwright**：`spec-kit-autotest` 内 node_modules 已装，`npm run test:*` 可用
+> - **凭据**：`spec-kit-autotest/.env` 已有有效账号（已实测能登录拿 token）；凭据不入库、不打印
+
+### A. 首次初始化（一次性）
 
 ```bash
-# 1. 查看全部门禁
-python3 pipeline.py --list
+cd /Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline
 
-# 2. 首次建立契约基线（目标站需暴露 OpenAPI）
-python3 tools/fetch_contract.py --save-baseline
+# 1. 演练：确认门禁能初始化（不真跑）
+/opt/homebrew/bin/python3 pipeline.py --dry-run
 
-# 3. 演练：只做门禁初始化校验，不真正执行
-python3 pipeline.py --dry-run
-
-# 4. 跑全部门禁
-python3 pipeline.py
-
-# 5. 只跑单个门禁
-python3 pipeline.py --gate contract_diff
+# 2.（可选）建立契约基线：自动登录 + 拉 OpenAPI
+#    ⚠️ 2026-08-19 实测：目标站未暴露 OpenAPI（/api/v1/openapi.json 404），
+#      此步当前会失败，contract_diff 保持跳过；待后端提供文档后再执行
+/opt/homebrew/bin/python3 tools/fetch_contract.py --auto-login --save-baseline
 ```
 
-退出码：`0` 全过 / `1` 有失败 / `2` 配置或用法错误 / `3` 阻断性门禁失败。
+### B. 日常迭代（每次开发/测试迭代跑一次）
+
+```bash
+cd /Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline
+
+# 1. 跑全部门禁（推荐）：
+#    static_scan → pattern_regression → e2e_regression(test:api) → mutation_check
+/opt/homebrew/bin/python3 pipeline.py
+
+# 2. 快速回归（接口测试全量耗时较长时，用 smoke 标签先冒烟）
+/opt/homebrew/bin/python3 pipeline.py --script test:smoke
+
+# 3. 查看报告（JSON + Markdown，失败项人可读）
+open report/$(ls -t report/ | grep .md$ | head -1)
+```
+
+### C. 专项操作
+
+```bash
+# 只跑单个门禁
+/opt/homebrew/bin/python3 pipeline.py --gate static_scan
+/opt/homebrew/bin/python3 pipeline.py --gate pattern_regression
+
+# 单独跑 Playwright（不进流水线，直接调试）
+cd /Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest
+npm run test:smoke    # 冒烟（@smoke 标签）
+npm run test:api      # 接口全量
+npm run test:ui       # UI 全量（Chromium + Firefox）
+npm run report        # 打开 Playwright HTML 报告
+
+# 进入流水线前预跑一次契约拉取（后端提供文档后）
+/opt/homebrew/bin/python3 pipeline.py --fetch-contract --auto-login
+```
+
+### 退出码
+
+`0` 全过 / `1` 有失败 / `2` 配置或用法错误 / `3` 阻断性门禁失败（流水线中断）。
+
+### 各门禁当前状态（2026-08-19 实测）
+
+| 门禁 | 启动顺序中的位置 | 状态 |
+|---|---|---|
+| `contract_diff` | 全量第 1 个 | ⏸ 跳过（无 OpenAPI 基线；后端未暴露文档） |
+| `static_scan` | 全量第 2 个 | ✅ error 0 / warn 3（测试密码告警） |
+| `pattern_regression` | 全量第 3 个 | ✅ 10/10（真实探测目标站） |
+| `e2e_regression` | 全量第 4 个 | ✅ test:unit 9/9；默认跑 test:api |
+| `mutation_check` | 全量第 5 个 | ⏸ 跳过（未配 Stryker） |
 
 ## 门禁清单
 
