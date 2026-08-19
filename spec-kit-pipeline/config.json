@@ -1,0 +1,43 @@
+{
+  "project_root": "/Users/xiaoxu/Desktop/移动办公/spec-kit-pipeline",
+  "autotest_dir": "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest",
+  "target": {
+    "base_url": "https://106.54.60.191",
+    "openapi_path": "/api/v1/openapi.json"
+  },
+  "gates": {
+    "contract_diff": {
+      "enabled": true,
+      "snapshot_dir": "assets/contract",
+      "baseline": "assets/contract/snapshot.json",
+      "current": "assets/contract/current.json"
+    },
+    "static_scan": {
+      "enabled": true,
+      "dirs": [
+        "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest"
+      ],
+      "external_cmd": null,
+      "skip_dirs": ["node_modules", ".git", "reports", "test-results"]
+    },
+    "pattern_regression": {
+      "enabled": true,
+      "patterns_file": "assets/patterns.json",
+      "timeout": 10
+    },
+    "e2e_regression": {
+      "enabled": true,
+      "autotest_dir": "/Users/xiaoxu/Desktop/移动办公/spec-kit-autotest",
+      "script": "test:api",
+      "report_file": "reports/test-results.json",
+      "min_pass_rate": 0.95,
+      "timeout": 1800
+    },
+    "mutation_check": {
+      "enabled": true,
+      "mutation_cmd": null,
+      "min_kill_rate": 0.7
+    }
+  },
+  "report_dir": "report"
+}

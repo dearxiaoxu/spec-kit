@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-08-19T09:38:02",
+  "results": [
+    {
+      "name": "pattern_regression",
+      "passed": false,
+      "blocking": true,
+      "skipped": false,
+      "detail": "模式库 10 项：通过 9 / 失败 1；失败项见 issues",
+      "issues": [
+        "[P02] 并发/竞态: 期望状态 200 实得 401"
+      ],
+      "metrics": {
+        "total": 10,
+        "passed": 9,
+        "failed": 1
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-08-19T09:08:00",
+  "results": [
+    {
+      "name": "e2e_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": false,
+      "detail": "npm run test:unit 退出码 0（未解析到 JSON 用例统计）",
+      "issues": [],
+      "metrics": {
+        "exit_code": 0
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  }
+}

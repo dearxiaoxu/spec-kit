@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-08-19T09:06:10",
+  "results": [
+    {
+      "name": "pattern_regression",
+      "passed": false,
+      "blocking": true,
+      "skipped": false,
+      "detail": "模式库 10 项：通过 9 / 失败 1；失败项见 issues",
+      "issues": [
+        "[P01] 空值/空指针: 文件缺失: /Users/xiaoxu/Desktop/移动办公/spec-kit-pipeline/tests/api/requirements.spec.js"
+      ],
+      "metrics": {
+        "total": 10,
+        "passed": 9,
+        "failed": 1
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  }
+}

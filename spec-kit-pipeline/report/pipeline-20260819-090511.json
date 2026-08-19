@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-08-19T09:05:11",
+  "results": [
+    {
+      "name": "contract_diff",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（跳过: 契约文件不存在: assets/contract/snapshot.json）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "static_scan",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（扫描完成：error 3 / warn 0（内置规则））",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "pattern_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（模式库 10 项：通过 9 / 失败 1；失败项见 issues）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "e2e_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（npm run test:api 退出码 1（未解析到 JSON 用例统计））",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "mutation_check",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（变异测试未配置（config.gates.mutation_check.mutation_cmd 为空），骨架阶段跳过。接入后按 kill rate 判定断言有效性。）",
+      "issues": [],
+      "metrics": {}
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 5
+  }
+}

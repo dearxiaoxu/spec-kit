@@ -1,0 +1,18 @@
+# 依赖
+node_modules/
+
+# 环境配置（含敏感凭据，勿提交）
+.env
+.env.local
+
+# 认证状态
+.auth/
+
+# 测试产物
+reports/
+test-results/
+playwright-report/
+blob-report/
+
+# 日志
+*.log

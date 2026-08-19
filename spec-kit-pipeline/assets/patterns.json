@@ -1,0 +1,301 @@
+{
+  "version": "0.2.0",
+  "updated_at": "2026-08-19",
+  "note": "AI 高发缺陷模式库（测试方案 §7.3.4 十类），已关联 580 条用例（Spec-Kit平台580条测试用例-v3.0.xlsx）。probe 为只读 HTTP 体检（未认证探测 401=鉴权正常）；攻击性验证用例标注在 test_cases，须在独立测试环境（方案A）执行，现网红线内不做。每轮迭代由测试维护，发现新集中缺陷类别即回填扩容。",
+  "patterns": [
+    {
+      "id": "P01",
+      "category": "空值/空指针",
+      "typical_bugs": "列表空、详情为 null、可空字段未判空",
+      "spec_kit_points": "需求详情、SDD 产物、团队成员为空时",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/requirements",
+        "expect": {
+          "status": 401
+        }
+      },
+      "test_cases": [
+        {
+          "id": "TC-AI-014",
+          "title": "AI 需求助手-空输入",
+          "point": "空输入不崩溃、提示友好"
+        },
+        {
+          "id": "TC-AI-034",
+          "title": "AI 需求助手-空输入(变体2)",
+          "point": "空/空白输入边界"
+        },
+        {
+          "id": "TC-REQ-002",
+          "title": "需求管理-字段校验",
+          "point": "必填项为空时提示且不可提交"
+        }
+      ],
+      "note": "probe 只体检需求列表接口可达性；空值断言人工在隔离环境跑 TC 用例"
+    },
+    {
+      "id": "P02",
+      "category": "并发/竞态",
+      "typical_bugs": "重复提交、重复审批、状态覆盖",
+      "spec_kit_points": "需求状态流转、审批并发、任务完成",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/auth/session",
+        "expect": {
+          "status": 401
+        }
+      },
+      "test_cases": [
+        {
+          "id": "TC-OPS-014",
+          "title": "性能可靠性与运维-重复提交",
+          "point": "重复提交不产生重复数据/状态覆盖"
+        },
+        {
+          "id": "TC-REQ-006",
+          "title": "需求管理-提交审核",
+          "point": "并发提交审核只产生一条流转"
+        },
+        {
+          "id": "TC-SEC-017",
+          "title": "安全与权限-审批自批",
+          "point": "审批人不能对自己审批"
+        }
+      ],
+      "note": "并发类断言人工设计；probe 只体检会话接口"
+    },
+    {
+      "id": "P03",
+      "category": "边界值",
+      "typical_bugs": "0/负数/极大值、空字符串、255 字符截断",
+      "spec_kit_points": "紧急度/重要度 1/3/5、COSMIC CFP、标题长度",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/requirements"
+      },
+      "test_cases": [
+        {
+          "id": "TC-REQ-002",
+          "title": "需求管理-字段校验",
+          "point": "标题长度 0/255/256 边界"
+        },
+        {
+          "id": "TC-AI-015",
+          "title": "AI 需求助手-特殊字符",
+          "point": "超长输入/Emoji/全角半角混合"
+        }
+      ],
+      "note": "边界值断言人工设计（防同源）；probe 仅可达性"
+    },
+    {
+      "id": "P04",
+      "category": "鉴权/越权",
+      "typical_bugs": "未校验 ownerId、直接按 id 访问他人数据",
+      "spec_kit_points": "需求/SDD/文档/会话跨用户访问",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/data/users",
+        "expect": {
+          "status": 401
+        }
+      },
+      "test_cases": [
+        {
+          "id": "TC-SEC-004",
+          "title": "安全与权限-横向越权",
+          "point": "member 访问他人需求/SDD/文档"
+        },
+        {
+          "id": "TC-SEC-005",
+          "title": "安全与权限-纵向越权",
+          "point": "member 调 /admin/* 应 403"
+        },
+        {
+          "id": "TC-SEC-021",
+          "title": "安全与权限-横向越权(变体2)",
+          "point": "跨团队数据不可见"
+        },
+        {
+          "id": "TC-SEC-024",
+          "title": "安全与权限-横向越权(变体2)",
+          "point": "URL 直改 id 越权"
+        },
+        {
+          "id": "TC-SEC-025",
+          "title": "安全与权限-纵向越权(变体2)",
+          "point": "角色提升越权"
+        }
+      ],
+      "note": "越权矩阵用例在方案A隔离环境执行；probe 体检未认证状态应 401"
+    },
+    {
+      "id": "P05",
+      "category": "时区/时间",
+      "typical_bugs": "日期偏移、夏令时、字符串时间解析",
+      "spec_kit_points": "待办'今天/逾期'、SSE 时间戳",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/data/tasks/inbox"
+      },
+      "test_cases": [
+        {
+          "id": "TC-OPS-004",
+          "title": "性能可靠性与运维-SSE 长连接",
+          "point": "SSE 时间戳一致、断线恢复"
+        },
+        {
+          "id": "TC-AI-006",
+          "title": "AI 需求助手-SSE 流式",
+          "point": "流式输出时间戳无偏移"
+        }
+      ],
+      "note": "时间边界断言人工设计"
+    },
+    {
+      "id": "P06",
+      "category": "编码/国际化",
+      "typical_bugs": "中文乱码、Unicode 截断、HTML 转义",
+      "spec_kit_points": "标题/评论/文档内容",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/docs/list"
+      },
+      "test_cases": [
+        {
+          "id": "TC-AI-015",
+          "title": "AI 需求助手-特殊字符",
+          "point": "中文/Emoji/Unicode 不乱码不截断"
+        },
+        {
+          "id": "TC-AI-035",
+          "title": "AI 需求助手-特殊字符(变体2)",
+          "point": "HTML 转义不渲染"
+        }
+      ],
+      "note": "中文响应头/内容校验在接口用例内完成"
+    },
+    {
+      "id": "P07",
+      "category": "正则/输入校验",
+      "typical_bugs": "校验绕过、注入串可过校验",
+      "spec_kit_points": "注册、搜索、筛选参数",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/requirements"
+      },
+      "test_cases": [
+        {
+          "id": "TC-SEC-006",
+          "title": "安全与权限-SQL 注入",
+          "point": "' OR 1=1-- 登录/搜索/筛选"
+        },
+        {
+          "id": "TC-SEC-007",
+          "title": "安全与权限-XSS",
+          "point": "<script>alert(1)</script> 富文本/文档"
+        },
+        {
+          "id": "TC-SEC-009",
+          "title": "安全与权限-命令注入",
+          "point": "OpenSpec 相关参数注入"
+        },
+        {
+          "id": "TC-SEC-026",
+          "title": "安全与权限-SQL 注入(变体2)",
+          "point": "注入串可过前端校验"
+        },
+        {
+          "id": "TC-SEC-027",
+          "title": "安全与权限-XSS(变体2)",
+          "point": "存储型 XSS"
+        }
+      ],
+      "note": "注入用例属攻击性测试，仅方案A隔离环境执行；probe 不注入"
+    },
+    {
+      "id": "P08",
+      "category": "资源/连接",
+      "typical_bugs": "连接未关闭、文件未释放、内存泄漏",
+      "spec_kit_points": "文档上传、大 JSON 导出、SSE 长连接",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/jobs"
+      },
+      "test_cases": [
+        {
+          "id": "TC-OPS-006",
+          "title": "性能可靠性与运维-文档上传并发",
+          "point": "连接释放、无泄漏"
+        },
+        {
+          "id": "TC-OPS-007",
+          "title": "性能可靠性与运维-大导出",
+          "point": "万级数据导出不 OOM"
+        },
+        {
+          "id": "TC-OPS-008",
+          "title": "性能可靠性与运维-8小时稳定性",
+          "point": "内存/连接数监控"
+        }
+      ],
+      "note": "长连接/内存类由性能专项覆盖"
+    },
+    {
+      "id": "P09",
+      "category": "事务/一致性",
+      "typical_bugs": "半成功状态、部分写入",
+      "spec_kit_points": "需求→SDD 流转、导入数据",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/requirements"
+      },
+      "test_cases": [
+        {
+          "id": "TC-REQ-011",
+          "title": "需求管理-状态迁移",
+          "point": "非法跳转拦截、状态不半途"
+        },
+        {
+          "id": "TC-REQ-051",
+          "title": "需求管理-状态迁移(变体3)",
+          "point": "→SDD 流转一致性"
+        },
+        {
+          "id": "TC-REQ-019",
+          "title": "需求管理-删除关联",
+          "point": "级联删除一致性"
+        }
+      ],
+      "note": "事务类断言人工设计"
+    },
+    {
+      "id": "P10",
+      "category": "幂等性",
+      "typical_bugs": "重复请求产生重复数据",
+      "spec_kit_points": "提交审核、AI 生成、导出",
+      "probe": {
+        "method": "GET",
+        "url": "/api/v1/conversations"
+      },
+      "test_cases": [
+        {
+          "id": "TC-REQ-006",
+          "title": "需求管理-提交审核",
+          "point": "重复提交幂等，只一次流转"
+        },
+        {
+          "id": "TC-OPS-014",
+          "title": "性能可靠性与运维-重复提交",
+          "point": "重复请求不产生重复数据"
+        },
+        {
+          "id": "TC-AI-020",
+          "title": "AI 需求助手-稳定性",
+          "point": "AI 生成重复请求幂等"
+        }
+      ],
+      "note": "幂等写操作用例人工设计，不在只读门禁内执行"
+    }
+  ]
+}

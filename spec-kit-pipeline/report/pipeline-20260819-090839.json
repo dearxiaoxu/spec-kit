@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-08-19T09:08:39",
+  "results": [
+    {
+      "name": "contract_diff",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "跳过: 契约文件不存在: assets/contract/snapshot.json",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "static_scan",
+      "passed": true,
+      "blocking": false,
+      "skipped": false,
+      "detail": "扫描完成：error 0 / warn 3（内置规则）",
+      "issues": [
+        "[warn] tests/unit/utils.spec.js 疑似硬编码密码: ...password: 'secret...",
+        "[warn] tests/api/auth.spec.js 疑似硬编码密码: ...password: 'wrong-pas...",
+        "[warn] tests/api/auth.spec.js 疑似硬编码密码: ...password: 'Test@1234..."
+      ],
+      "metrics": {
+        "errors": 0,
+        "warnings": 3,
+        "rules": 6
+      }
+    },
+    {
+      "name": "pattern_regression",
+      "passed": true,
+      "blocking": true,
+      "skipped": false,
+      "detail": "模式库 10 项：通过 10 / 失败 0，全部通过",
+      "issues": [],
+      "metrics": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0
+      }
+    },
+    {
+      "name": "e2e_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": false,
+      "detail": "test:unit: 通过率 100.0%（9/9）",
+      "issues": [],
+      "metrics": {
+        "total": 9,
+        "passed": 9,
+        "failed": 0,
+        "pass_rate": 1.0
+      }
+    },
+    {
+      "name": "mutation_check",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "变异测试未配置（config.gates.mutation_check.mutation_cmd 为空），骨架阶段跳过。接入后按 kill rate 判定断言有效性。",
+      "issues": [],
+      "metrics": {
+        "min_kill_rate": 0.7
+      }
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 2
+  }
+}

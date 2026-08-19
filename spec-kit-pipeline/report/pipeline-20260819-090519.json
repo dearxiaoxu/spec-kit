@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-08-19T09:05:19",
+  "results": [
+    {
+      "name": "static_scan",
+      "passed": false,
+      "blocking": false,
+      "skipped": false,
+      "detail": "扫描完成：error 3 / warn 0（内置规则）",
+      "issues": [
+        "[error] tests/unit/utils.spec.js 疑似硬编码密码: ...password: 'secret...",
+        "[error] tests/api/auth.spec.js 疑似硬编码密码: ...password: 'wrong-pas...",
+        "[error] tests/api/auth.spec.js 疑似硬编码密码: ...password: 'Test@1234..."
+      ],
+      "metrics": {
+        "errors": 3,
+        "warnings": 0,
+        "rules": 6
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  }
+}

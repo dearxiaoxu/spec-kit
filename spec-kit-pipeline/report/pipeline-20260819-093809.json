@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-08-19T09:38:09",
+  "results": [
+    {
+      "name": "pattern_regression",
+      "passed": true,
+      "blocking": true,
+      "skipped": false,
+      "detail": "模式库 10 项：通过 10 / 失败 0，全部通过",
+      "issues": [],
+      "metrics": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  }
+}

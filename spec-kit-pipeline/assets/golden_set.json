@@ -1,0 +1,49 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-08-19",
+  "note": "AI 能力质量评测黄金集（测试方案 §7.0）。每个样本由两名专家独立标注、第三人仲裁，先确认人人对齐再评估人机对齐。骨架阶段仅登记占位，正式样本按 A/B/C/D 需求与七阶段产物扩充。",
+  "samples": [
+    {
+      "id": "G01",
+      "demand_grade": "A",
+      "sdd_step": "spec",
+      "input_type": "normal",
+      "sample": "（占位）轻量需求记录：描述目标用户、场景、验收点",
+      "annotations": {
+        "expert_a": null,
+        "expert_b": null,
+        "arbiter": null,
+        "human_align": null,
+        "human_machine_align": null
+      },
+      "meta": {
+        "model": null,
+        "model_version": null,
+        "prompt_version": null,
+        "rule_skill_version": null,
+        "temperature": null
+      }
+    },
+    {
+      "id": "G02",
+      "demand_grade": "C",
+      "sdd_step": "judge",
+      "input_type": "conflict",
+      "sample": "（占位）存在冲突/边界歧义的 Judge 输入样本",
+      "annotations": {
+        "expert_a": null,
+        "expert_b": null,
+        "arbiter": null,
+        "human_align": null,
+        "human_machine_align": null
+      },
+      "meta": {
+        "model": null,
+        "model_version": null,
+        "prompt_version": null,
+        "rule_skill_version": null,
+        "temperature": null
+      }
+    }
+  ]
+}

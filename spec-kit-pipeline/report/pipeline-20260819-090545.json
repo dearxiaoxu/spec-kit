@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-08-19T09:05:45",
+  "results": [
+    {
+      "name": "contract_diff",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（init 校验 OK）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "static_scan",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（init 校验 OK）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "pattern_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（init 校验 OK）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "e2e_regression",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（init 校验 OK）",
+      "issues": [],
+      "metrics": {}
+    },
+    {
+      "name": "mutation_check",
+      "passed": true,
+      "blocking": false,
+      "skipped": true,
+      "detail": "dry-run 演练通过（init 校验 OK）",
+      "issues": [],
+      "metrics": {}
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 5
+  }
+}
