@@ -16,6 +16,7 @@ const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
 const { requirementData, uniqueTitle } = require('../../utils/testData');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,
@@ -119,6 +120,6 @@ describe('【转换示例】自然语言 → 自动化', () => {
     expect(msg.ok !== undefined).toBe(true);
 
     // 清理会话
-    await apiClient.delete(`${env.baseURL}${env.api(`/conversations/${convId}`)}`).catch(() => {});
+    await safeCleanup(`conversation:${convId}`, () => apiClient.delete(`${env.baseURL}${env.api(`/conversations/${convId}`)}`));
   });
 });

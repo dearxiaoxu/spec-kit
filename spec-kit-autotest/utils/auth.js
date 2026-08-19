@@ -41,8 +41,8 @@ async function uiLogin(page, cred = {}) {
   await page.click('button.auth-submit');
   // 等待跳转到登录后页面（收件箱）
   // 注意：页面存在 SSE 长连接，不能使用 networkidle，等待可见元素即可
-  await page.waitForURL('**/inbox**', { timeout: env.timeout }).catch(() => {});
-  await page.waitForSelector('text=收件箱', { timeout: 10000 }).catch(() => {});
+  await page.waitForURL('**/inbox**', { timeout: env.timeout });
+  await page.waitForSelector('text=收件箱', { timeout: 10000 });
 }
 
 module.exports = { apiLogin, uiLogin };

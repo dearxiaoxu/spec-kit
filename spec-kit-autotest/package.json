@@ -4,14 +4,23 @@
   "description": "Spec-Kit 平台自动化测试框架（Playwright + API 接口测试）",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test",
-    "test:ui": "playwright test --project=ui-chromium --project=ui-firefox",
-    "test:api": "playwright test --project=api",
-    "test:unit": "playwright test --project=unit",
-    "test:smoke": "playwright test --grep @smoke",
-    "test:headed": "playwright test --headed",
+    "test": "npm run test:api:readonly",
+    "test:ui": "node scripts/run-suite.js ui",
+    "test:api": "npm run test:api:readonly",
+    "test:api:readonly": "node scripts/run-suite.js readonly",
+    "test:api:stateful": "node scripts/run-suite.js stateful",
+    "test:api:ai": "node scripts/run-suite.js ai",
+    "test:api:destructive": "node scripts/run-suite.js destructive",
+    "test:unit": "SKIP_REMOTE_SETUP=true playwright test --project=unit",
+    "test:ci": "npm run lint && npm run test:unit && npm run test:api:readonly",
+    "test:smoke": "node scripts/run-suite.js readonly",
+    "test:headed": "TEST_HEADED=true node scripts/run-suite.js ui",
     "report": "playwright show-report",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "scan:semgrep": ".tools/semgrep/bin/semgrep scan --config semgrep.yml .",
+    "test:mutation": "stryker run",
+    "test:inventory": "node scripts/test-inventory.js",
+    "test:inventory:update": "node scripts/test-inventory.js --write"
   },
   "keywords": [
     "spec-kit",
@@ -22,6 +31,8 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.45.0",
-    "dotenv": "^16.4.5"
+    "@stryker-mutator/core": "^10.0.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^10.8.1"
   }
 }

@@ -23,6 +23,7 @@ class MutationCheckGate(Gate):
         cfg = self.gate_cfg
         self.mutation_cmd = cfg.get("mutation_cmd")
         self.min_kill_rate = float(cfg.get("min_kill_rate", 0.7))
+        self.cwd = self.config.get("autotest_dir", self.config.get("project_root", "."))
 
     def run(self) -> GateResult:
         if not self.mutation_cmd:
@@ -37,7 +38,7 @@ class MutationCheckGate(Gate):
             )
 
         try:
-            proc = subprocess.run(self.mutation_cmd, capture_output=True, text=True, timeout=3600)
+            proc = subprocess.run(self.mutation_cmd, cwd=self.cwd, capture_output=True, text=True, timeout=3600)
         except Exception as e:
             raise GateSetupError(f"变异测试执行失败: {e}")
 

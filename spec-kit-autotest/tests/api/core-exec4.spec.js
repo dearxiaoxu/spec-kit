@@ -18,6 +18,7 @@ const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
 const { uniqueTitle } = require('../../utils/testData');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   conversations: () => `${env.baseURL}${env.api('/conversations')}`,
@@ -46,7 +47,7 @@ describe('【执行层批次4】核心功能 P0', () => {
     const msg = await msgRes.json();
     expect(msg.ok !== undefined).toBe(true);
 
-    await apiClient.delete(API.convById(convId)).catch(() => {});
+    await safeCleanup(`conversation:${convId}`, () => apiClient.delete(API.convById(convId)));
   });
 
   /**

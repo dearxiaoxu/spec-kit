@@ -37,11 +37,17 @@ cd /Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline
 cd /Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline
 
 # 1. 跑全部门禁（推荐）：
-#    static_scan → pattern_regression → e2e_regression(test:api) → mutation_check
+#    按 --stage 选择门禁；不再无条件执行全部门禁
 /opt/homebrew/bin/python3 pipeline.py
 
 # 2. 快速回归（接口测试全量耗时较长时，用 smoke 标签先冒烟）
 /opt/homebrew/bin/python3 pipeline.py --script test:smoke
+
+# 分阶段执行
+/opt/homebrew/bin/python3 pipeline.py --stage code
+/opt/homebrew/bin/python3 pipeline.py --stage smoke
+/opt/homebrew/bin/python3 pipeline.py --stage test
+/opt/homebrew/bin/python3 pipeline.py --stage release
 
 # 3. 查看报告（JSON + Markdown，失败项人可读）
 open report/$(ls -t report/ | grep .md$ | head -1)
@@ -65,9 +71,15 @@ npm run report        # 打开 Playwright HTML 报告
 /opt/homebrew/bin/python3 pipeline.py --fetch-contract --auto-login
 ```
 
-### 退出码
+### 阶段、状态与退出码
 
-`0` 全过 / `1` 有失败 / `2` 配置或用法错误 / `3` 阻断性门禁失败（流水线中断）。
+阶段：`code`（unit/static）、`smoke`（pattern/readonly）、`test`（回归）、`release`（契约/全量/变异）、`ai`、`destructive`。
+
+状态：`PASS`、`FAIL`、`BLOCKED`、`SKIP`、`FLAKY`、`ENV_ERROR`、`CONFIG_ERROR`。
+
+`0` 允许准出 / `1` 普通失败或波动 / `2` 配置错误或必需门禁不可用 / `3` 阻断失败 / `4` 环境不可用。
+
+每个 Gate 支持 `required`、`skip_policy`（`allow/warn/fail`）和 `stages`。release 阶段的必需门禁不得用 SKIP 冒充通过。
 
 ### 各门禁当前状态（2026-08-19 实测）
 

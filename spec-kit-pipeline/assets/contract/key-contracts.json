@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "note": "OpenAPI 不可用时使用的人工审核关键契约；release 门禁校验这些端点均有自动化覆盖。",
+  "contracts": [
+    {"endpoint": "POST /api/v1/auth/login", "path": "/auth/login", "required_response": ["ok", "data.accessToken", "data.refreshToken"]},
+    {"endpoint": "GET /api/v1/auth/session", "path": "/auth/session", "required_response": ["ok", "data"]},
+    {"endpoint": "GET /api/v1/requirements", "path": "/requirements", "required_response": ["ok", "data"]},
+    {"endpoint": "GET /api/v1/sdd/projects", "path": "/sdd/projects", "required_response": ["ok", "data"]},
+    {"endpoint": "GET /api/v1/jobs", "path": "/jobs", "required_response": ["ok", "data"]},
+    {"endpoint": "GET /api/v1/quality-gates", "path": "/quality-gates", "required_response": ["ok", "data"]}
+  ]
+}

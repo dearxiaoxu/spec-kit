@@ -20,7 +20,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
+import time
+import uuid
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -28,7 +31,7 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from gates import ALL_GATES
-from gates.base import GateResult, GateSetupError
+from gates.base import GateEnvironmentError, GateResult, GateSetupError, GateStatus
 
 CONFIG_FILE = "config.json"
 REPORT_DIR = "report"
@@ -41,53 +44,94 @@ def load_config() -> Dict:
         sys.exit(2)
     with open(path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
-    cfg.setdefault("project_root", os.path.dirname(os.path.abspath(__file__)))
+    config_dir = os.path.dirname(path)
+    workspace_root = os.path.realpath(os.path.join(config_dir, ".."))
+    for key, default in (("project_root", "."), ("autotest_dir", "../spec-kit-autotest"), ("report_dir", "report")):
+        raw = os.environ.get(f"SPEC_KIT_{key.upper()}", cfg.get(key, default))
+        resolved = os.path.realpath(raw if os.path.isabs(raw) else os.path.join(config_dir, raw))
+        if os.path.commonpath([workspace_root, resolved]) != workspace_root:
+            raise ValueError(f"配置路径越界: {key}={resolved}")
+        cfg[key] = resolved
+    for gate_cfg in (cfg.get("gates") or {}).values():
+        if isinstance(gate_cfg, dict) and "autotest_dir" in gate_cfg:
+            gate_cfg["autotest_dir"] = cfg["autotest_dir"]
     return cfg
 
 
 def run_gate(gate_cls, config: Dict, dry_run: bool = False) -> Optional[GateResult]:
     name = gate_cls.name
+    gate_cfg = (config.get("gates") or {}).get(name, {}) or {}
+    required = bool(gate_cfg.get("required", False))
+    skip_policy = gate_cfg.get("skip_policy", "fail" if required else "allow")
     try:
         gate = gate_cls(config, ctx={})
         gate.init()
         if not gate.enabled():
+            if skip_policy == "fail":
+                return GateResult(name=name, status=GateStatus.CONFIG_ERROR, detail="必需门禁在 config 中被禁用")
             return GateResult(name=name, passed=True, skipped=True, detail="门禁在 config 中已禁用")
         if dry_run:
             # 演练模式：只做启动校验（init），不真正执行门禁逻辑，避免副作用
             return GateResult(name=name, passed=True, skipped=True, detail=f"dry-run 演练通过（init 校验 OK）")
-        return gate.run()
+        result = gate.run()
+        if result.status == GateStatus.SKIP and skip_policy == "fail":
+            return GateResult(name=name, status=GateStatus.CONFIG_ERROR, detail=f"必需门禁不可跳过: {result.detail}")
+        if result.status == GateStatus.SKIP and skip_policy == "warn":
+            result.issues.append("skip_policy=warn：门禁未执行，需要人工确认")
+        return result
     except GateSetupError as e:
+        if skip_policy == "fail":
+            return GateResult(name=name, status=GateStatus.CONFIG_ERROR, detail=f"配置错误: {e}")
         return GateResult(name=name, passed=True, skipped=True, detail=f"跳过: {e}")
+    except GateEnvironmentError as e:
+        return GateResult(name=name, status=GateStatus.ENV_ERROR, detail=f"环境错误: {e}")
     except Exception as e:
         return GateResult(
             name=name,
-            passed=False,
-            blocking=bool(getattr(gate_cls, "blocking", False)),
+            status=GateStatus.BLOCKED if getattr(gate_cls, "blocking", False) else GateStatus.FAIL,
             detail=f"门禁执行异常: {e}",
         )
 
 
 def result_mark(result: GateResult) -> str:
     """将 GateResult 转成人可读状态；跳过必须与通过严格区分。"""
-    if result.skipped:
-        return "SKIP"
-    return "PASS" if result.passed else "FAIL"
+    return result.status.value
+
+
+def git_commit(project_root: str) -> str:
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=project_root,
+            capture_output=True, text=True, timeout=5, check=True,
+        ).stdout.strip()
+    except Exception:
+        return "unknown"
 
 
 def write_report(results: List[GateResult], config: Dict) -> str:
     report_dir = config.get("report_dir", REPORT_DIR)
     os.makedirs(report_dir, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    base = os.path.join(report_dir, f"pipeline-{ts}")
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    run_suffix = str(config.get("run_id", uuid.uuid4())).split("-")[0]
+    base = os.path.join(report_dir, f"pipeline-{ts}-{run_suffix}")
 
+    statuses = {status.value: sum(1 for r in results if r.status == status) for status in GateStatus}
     payload = {
+        "run_id": config.get("run_id", str(uuid.uuid4())),
         "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "started_at": config.get("started_at"),
+        "duration_seconds": round(float(config.get("duration_seconds", 0)), 3),
+        "git_commit": git_commit(config.get("project_root", ".")),
+        "environment": config.get("environment", "production-like"),
+        "stage": config.get("stage", "default"),
+        "feature_flags": config.get("feature_flags", {}),
         "results": [r.to_dict() for r in results],
         "summary": {
             "total": len(results),
             "passed": sum(1 for r in results if r.passed and not r.skipped),
             "failed": sum(1 for r in results if not r.passed),
             "skipped": sum(1 for r in results if r.skipped),
+            "statuses": statuses,
         },
     }
     json_path = base + ".json"
@@ -140,6 +184,15 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config()
+    config["stage"] = args.stage or "default"
+    config["run_id"] = str(uuid.uuid4())
+    config["started_at"] = datetime.now().isoformat(timespec="seconds")
+    config["started_monotonic"] = time.monotonic()
+    config["feature_flags"] = {
+        "run_ai_tests": os.environ.get("RUN_AI_TESTS") == "true",
+        "allow_stateful_tests": os.environ.get("ALLOW_STATEFUL_TESTS") == "true",
+        "allow_destructive_tests": os.environ.get("ALLOW_DESTRUCTIVE_TESTS") == "true",
+    }
 
     if args.script:
         config.setdefault("gates", {}).setdefault("e2e_regression", {})["script"] = args.script
@@ -168,7 +221,11 @@ def main() -> int:
         gates = ALL_GATES
 
     if args.stage:
-        print(f"[NOTE] 阶段过滤（{args.stage}）在骨架阶段不生效，全部启用门禁都会运行；后续可按阶段拆分流水线。")
+        allowed = {"code", "smoke", "test", "release", "ai", "destructive"}
+        if args.stage not in allowed:
+            print(f"[FATAL] 未知阶段: {args.stage}")
+            return 2
+        gates = [cls for cls in gates if args.stage in (((config.get("gates") or {}).get(cls.name, {}) or {}).get("stages", []))]
 
     results: List[GateResult] = []
     failed_any = False
@@ -184,18 +241,25 @@ def main() -> int:
         print(f"    [{mark}] {result.detail}")
         for it in result.issues[:5]:
             print(f"      - {it[:140]}")
-        if not result.passed:
+        if result.status not in (GateStatus.PASS, GateStatus.SKIP):
             failed_any = True
-            if result.blocking:
+            if result.status == GateStatus.BLOCKED:
                 blocked = True
                 print(f"    [BLOCK] 阻断性门禁 {name} 失败，流水线中断")
                 break
 
+    config["duration_seconds"] = time.monotonic() - config["started_monotonic"]
     write_report(results, config)
 
     if blocked:
         print("\n[RESULT] FAILED（阻断性门禁失败）")
         return 3
+    if any(r.status == GateStatus.CONFIG_ERROR for r in results):
+        print("\n[RESULT] CONFIG ERROR（配置或必需门禁不可用）")
+        return 2
+    if any(r.status == GateStatus.ENV_ERROR for r in results):
+        print("\n[RESULT] ENVIRONMENT ERROR（环境不稳定或不可达）")
+        return 4
     if failed_any:
         print("\n[RESULT] FAILED（存在失败项，见报告）")
         return 1

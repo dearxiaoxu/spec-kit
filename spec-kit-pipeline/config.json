@@ -1,6 +1,7 @@
 {
-  "project_root": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-pipeline",
-  "autotest_dir": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest",
+  "environment": "production-like",
+  "project_root": ".",
+  "autotest_dir": "../spec-kit-autotest",
   "target": {
     "base_url": "https://106.54.60.191",
     "openapi_path": "/api/v1/openapi.json"
@@ -8,16 +9,29 @@
   "gates": {
     "contract_diff": {
       "enabled": true,
+      "required": true,
+      "skip_policy": "fail",
+      "stages": ["release"],
       "snapshot_dir": "assets/contract",
       "baseline": "assets/contract/snapshot.json",
-      "current": "assets/contract/current.json"
+      "current": "assets/contract/current.json",
+      "schema_fallback": "assets/contract/key-contracts.json"
     },
     "static_scan": {
       "enabled": true,
+      "required": true,
+      "skip_policy": "fail",
+      "stages": ["code", "release"],
       "dirs": [
-        "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest"
+        "../spec-kit-autotest"
       ],
-      "external_cmd": null,
+      "external_cmds_by_stage": {
+        "code": [["npm", "run", "lint"]],
+        "release": [
+          ["npm", "run", "lint"],
+          [".tools/semgrep/bin/semgrep", "scan", "--config", "semgrep.yml", "."]
+        ]
+      },
       "skip_dirs": [
         "node_modules",
         ".git",
@@ -27,20 +41,37 @@
     },
     "pattern_regression": {
       "enabled": true,
+      "required": true,
+      "skip_policy": "fail",
+      "stages": ["smoke", "test", "release"],
       "patterns_file": "assets/patterns.json",
       "timeout": 10
     },
     "e2e_regression": {
       "enabled": true,
-      "autotest_dir": "/Users/xiaoxu/Desktop/spec-kit/spec-kit-autotest",
-      "script": "test:api",
+      "required": true,
+      "skip_policy": "fail",
+      "stages": ["code", "smoke", "test", "release", "ai", "destructive"],
+      "autotest_dir": "../spec-kit-autotest",
+      "scripts_by_stage": {
+        "code": "test:unit",
+        "smoke": "test:api:readonly",
+        "test": "test:ci",
+        "release": "test:ci",
+        "ai": "test:api:ai",
+        "destructive": "test:api:destructive"
+      },
+      "script": "test:api:readonly",
       "report_file": "reports/test-results.json",
       "min_pass_rate": 0.95,
       "timeout": 1800
     },
     "mutation_check": {
       "enabled": true,
-      "mutation_cmd": null,
+      "required": true,
+      "skip_policy": "fail",
+      "stages": ["release"],
+      "mutation_cmd": ["npm", "run", "test:mutation"],
       "min_kill_rate": 0.7
     }
   },

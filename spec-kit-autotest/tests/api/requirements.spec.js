@@ -5,7 +5,7 @@
 const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
-const { requirementData, uniqueTitle } = require('../../utils/testData');
+const { requirementData } = require('../../utils/testData');
 
 const API = {
   requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,

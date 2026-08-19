@@ -3,7 +3,6 @@
  * 覆盖：空状态、新建待办、优先级过滤
  */
 const { test, expect } = require('@playwright/test');
-const env = require('../../config/env');
 const { uiLogin } = require('../../utils/auth');
 const { uniqueTitle } = require('../../utils/testData');
 

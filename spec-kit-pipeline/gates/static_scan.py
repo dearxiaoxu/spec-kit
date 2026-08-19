@@ -29,7 +29,7 @@ RULES = [
     ("凭据疑似写入日志", r"(print|console\.log|logger\.(info|debug))\(.*(password|token|secret|key)", "warn"),
 ]
 
-DEFAULT_SKIP_DIRS = {"node_modules", ".git", "reports", "test-results", "report", "venv", "__pycache__"}
+DEFAULT_SKIP_DIRS = {"node_modules", ".git", ".tools", "reports", "test-results", "report", "venv", "__pycache__"}
 
 
 class StaticScanGate(Gate):
@@ -37,14 +37,25 @@ class StaticScanGate(Gate):
 
     def init(self) -> None:
         cfg = self.gate_cfg
-        self.scan_dirs = cfg.get("dirs") or [self.config.get("project_root", ".")]
-        self.external_cmd = cfg.get("external_cmd")  # 如 ["semgrep", "scan", "--config=auto", "."]
+        project_root = self.config.get("project_root", ".")
+        self.scan_dirs = [
+            p if os.path.isabs(p) else os.path.realpath(os.path.join(project_root, p))
+            for p in (cfg.get("dirs") or [project_root])
+        ]
+        stage = self.config.get("stage", "default")
+        self.external_cmds = (cfg.get("external_cmds_by_stage") or {}).get(stage)
+        if self.external_cmds is None:
+            legacy = cfg.get("external_cmd")
+            self.external_cmds = [legacy] if legacy else []
+        self.external_cwd = self.config.get("autotest_dir", project_root)
         self.skip_dirs = set(cfg.get("skip_dirs", [])) | DEFAULT_SKIP_DIRS
 
     def _iter_files(self, root: str):
         for dirpath, dirnames, filenames in os.walk(root):
             dirnames[:] = [d for d in dirnames if d not in self.skip_dirs]
             for fn in filenames:
+                if fn in {"package-lock.json", "semgrep.yml"}:
+                    continue
                 if fn.endswith((".js", ".ts", ".py", ".java", ".go", ".json", ".env", ".yaml", ".yml", ".sh")):
                     yield os.path.join(dirpath, fn)
 
@@ -65,22 +76,29 @@ class StaticScanGate(Gate):
                         # 排除示例/占位（如 README 里的示例 key）
                         if "example" in rel.lower() or ".env.example" in rel:
                             continue
-                        findings.append(f"[{level}] {rel} {name}: ...{m.group(0)[:20]}...")
+                        line = content.count("\n", 0, m.start()) + 1
+                        findings.append(f"[{level}] {rel}:{line} {name}（匹配内容已脱敏）")
         return findings
 
     def _run_external(self) -> List[str]:
-        if not self.external_cmd:
+        if not self.external_cmds:
             return []
-        try:
-            proc = subprocess.run(self.external_cmd, capture_output=True, text=True, timeout=600)
-            out = (proc.stdout or "") + (proc.stderr or "")
-            return [ln for ln in out.splitlines() if ln.strip()][:50]
-        except Exception as e:
-            raise GateSetupError(f"外部扫描工具执行失败: {e}")
+        findings = []
+        for command in self.external_cmds:
+            try:
+                proc = subprocess.run(command, cwd=self.external_cwd, capture_output=True, text=True, timeout=600)
+                out = (proc.stdout or "") + (proc.stderr or "")
+                lines = [ln for ln in out.splitlines() if ln.strip()][:50]
+                if proc.returncode != 0:
+                    lines.insert(0, f"[error] 外部扫描退出码 {proc.returncode}: {' '.join(command)}")
+                findings.extend(lines)
+            except Exception as e:
+                raise GateSetupError(f"外部扫描工具执行失败 ({' '.join(command)}): {e}")
+        return findings
 
     def run(self) -> GateResult:
         findings = self._scan_builtin()
-        if self.external_cmd:
+        if self.external_cmds:
             findings += self._run_external()
 
         errors = [f for f in findings if f.startswith("[error]")]
@@ -90,7 +108,7 @@ class StaticScanGate(Gate):
             name=self.name,
             passed=len(errors) == 0,
             blocking=self.blocking,
-            detail=f"扫描完成：error {len(errors)} / warn {len(warnings)}" + ("（含外部工具）" if self.external_cmd else "（内置规则）"),
+            detail=f"扫描完成：error {len(errors)} / warn {len(warnings)}" + ("（含外部工具）" if self.external_cmds else "（内置规则）"),
             issues=findings,
             metrics={"errors": len(errors), "warnings": len(warnings), "rules": len(RULES)},
         )

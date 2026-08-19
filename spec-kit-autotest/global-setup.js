@@ -39,6 +39,10 @@ function httpsPost(url, data) {
 }
 
 async function globalSetup() {
+  if (process.env.SKIP_REMOTE_SETUP === 'true') {
+    console.log('[global-setup] 单元/静态模式，跳过远端探测');
+    return;
+  }
   console.log(`[global-setup] 目标环境: ${env.baseURL} (cert ignored: ${env.ignoreHTTPSErrors})`);
 
   // 1. 探测登录页
@@ -50,7 +54,7 @@ async function globalSetup() {
       console.log(`[global-setup] 登录页可达 (HTTP ${res.status})`);
     }
   } catch (e) {
-    console.warn(`[global-setup] 环境不可达: ${e.message}`);
+    throw new Error(`[ENV_ERROR] 环境不可达: ${e.message}`);
   }
 
   // 2. 校验测试账号可登录
@@ -63,13 +67,13 @@ async function globalSetup() {
       if (res.status === 200 && res.body.includes('"ok":true')) {
         console.log(`[global-setup] 账号 ${env.username} 登录验证通过`);
       } else {
-        console.warn(`[global-setup] 账号 ${env.username} 登录验证失败: HTTP ${res.status}, ${res.body}`);
+        throw new Error(`账号 ${env.username} 登录验证失败: HTTP ${res.status}`);
       }
     } catch (e) {
-      console.warn(`[global-setup] 登录验证异常: ${e.message}`);
+      throw new Error(`[ENV_ERROR] 登录验证异常: ${e.message}`);
     }
   } else {
-    console.log('[global-setup] 未配置密码，跳过登录验证');
+    throw new Error('[CONFIG_ERROR] 未配置测试账号密码');
   }
 }
 

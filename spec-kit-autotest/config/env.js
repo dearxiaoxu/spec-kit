@@ -22,6 +22,11 @@ const env = {
   timeout: parseInt(process.env.TIMEOUT || '30000', 10),
   /** 是否执行 AI 用例（会产生模型调用费用） */
   runAITests: process.env.RUN_AI_TESTS === 'true',
+  /** 环境类型：production-like / isolated / local */
+  environmentType: process.env.TEST_ENV_TYPE || 'production-like',
+  allowStatefulTests: process.env.ALLOW_STATEFUL_TESTS === 'true',
+  allowDestructiveTests: process.env.ALLOW_DESTRUCTIVE_TESTS === 'true',
+  environmentErrorThreshold: parseInt(process.env.ENV_ERROR_THRESHOLD || '3', 10),
   /** API 前缀 */
   apiPrefix: '/api/v1',
 };

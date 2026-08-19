@@ -17,8 +17,9 @@
 const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
-const { requirementData, uniqueTitle } = require('../../utils/testData');
+const { requirementData } = require('../../utils/testData');
 const { envTolerant } = require('../../utils/envGuard');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,
@@ -64,7 +65,6 @@ describe('【执行层批次1】核心功能 P0', () => {
       // 终态唯一性：状态字段若是终态枚举则断言
       const status = first.status;
       if (status) {
-        const TERMINAL = ['completed', 'failed', 'cancelled', 'success', 'error'];
         expect(typeof status).toBe('string');
         // 结构断言：不允许 status 同时出现在多个互斥字段里
         const statusKeys = Object.keys(first).filter((k) => /status|state/i.test(k));
@@ -140,7 +140,7 @@ describe('【执行层批次1】核心功能 P0', () => {
       // C 级自批正确行为：ok=false（拒绝）或返回明确错误；不允许静默成功
       expect(approveBody.ok === false || approveRes.status() >= 400).toBe(true);
     } finally {
-      await apiClient.delete(API.reqById(req.id)).catch(() => {});
+      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));
     }
   });
 
@@ -166,7 +166,7 @@ describe('【执行层批次1】核心功能 P0', () => {
         expect([r1.status(), r2.status()]).not.toContain(500);
       }
     } finally {
-      await apiClient.delete(API.reqById(req.id)).catch(() => {});
+      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));
     }
   });
 
@@ -208,7 +208,7 @@ describe('【执行层批次1】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.reqById(req.id)).catch(() => {});
+      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));
     }
   });
 });

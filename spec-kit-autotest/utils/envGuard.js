@@ -11,16 +11,30 @@
  *
  * 注意：envTolerant 只豁免"环境性失败"；真正的功能断言（401/403/幂等等）不应套用。
  */
-function envTolerant(name, res, body = {}) {
+class EnvironmentResponseError extends Error {
+  constructor(name, status, isHtml) {
+    super(`[env] ${name} 返回 ${status}${isHtml ? ' HTML页' : ''}`);
+    this.name = 'EnvironmentResponseError';
+    this.status = status;
+    this.isHtml = isHtml;
+    this.classification = 'ENV_ERROR';
+  }
+}
+
+function classifyEnvironmentFailure(name, res) {
   const ct = ((res && res.headers) ? res.headers() : {})['content-type'] || '';
   const isHtml = ct.toLowerCase().includes('text/html');
   const is5xx = res && res.status() >= 500;
   if (is5xx || isHtml) {
-    // eslint-disable-next-line no-console
-    console.warn(`[env] ${name} 返回 ${res ? res.status() : '?'}${isHtml ? ' HTML页' : ''}（现网偶发波动，环境性跳过）`);
-    return true;
+    return new EnvironmentResponseError(name, res ? res.status() : '?', isHtml);
   }
+  return null;
+}
+
+function envTolerant(name, res) {
+  const error = classifyEnvironmentFailure(name, res);
+  if (error) throw error;
   return false;
 }
 
-module.exports = { envTolerant };
+module.exports = { EnvironmentResponseError, classifyEnvironmentFailure, envTolerant };

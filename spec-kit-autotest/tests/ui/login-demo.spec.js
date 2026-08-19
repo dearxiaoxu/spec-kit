@@ -111,7 +111,7 @@ test.describe('登录页：AI 写骨架 + 人工写灵魂 示例', () => {
     // [人工灵魂] 越权基线断言：
     //  未登录访问 /inbox 应跳回 /login（而不是直接放行或报错白屏）
     //  注意：等待可见元素，不要用 networkidle（页面有 SSE 长连接会超时）
-    await page.waitForURL('**/login**', { timeout: env.timeout }).catch(() => {});
+    await page.waitForURL('**/login**', { timeout: env.timeout });
     const url = page.url();
     expect(url, `未登录访问受保护页应回到登录页，实际: ${url}`).toContain('/login');
   });

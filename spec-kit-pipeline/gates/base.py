@@ -11,7 +11,31 @@ Gate 基类与结果模型 —— Spec-Kit 流水线门禁的统一契约。
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
+import re
 from typing import Any, Dict, List, Optional
+
+
+class GateStatus(str, Enum):
+    PASS = "PASS"
+    FAIL = "FAIL"
+    BLOCKED = "BLOCKED"
+    SKIP = "SKIP"
+    FLAKY = "FLAKY"
+    ENV_ERROR = "ENV_ERROR"
+    CONFIG_ERROR = "CONFIG_ERROR"
+
+
+def redact_sensitive(value: str) -> str:
+    """对报告中的常见凭据字段做兜底脱敏。"""
+    text = str(value)
+    patterns = [
+        r"(?i)(password|passwd|pwd|token|authorization|secret|api[_-]?key)(\s*[:=]\s*)([^\s,}\]]+)",
+        r"(?i)(bearer\s+)[A-Za-z0-9._-]+",
+    ]
+    for pattern in patterns:
+        text = re.sub(pattern, lambda m: f"{m.group(1)}{m.group(2) if m.lastindex and m.lastindex >= 2 else ''}[REDACTED]", text)
+    return text
 
 
 @dataclass
@@ -23,6 +47,21 @@ class GateResult:
     detail: str = ""
     issues: List[str] = field(default_factory=list)
     metrics: Dict[str, Any] = field(default_factory=dict)
+    status: Optional[GateStatus] = None
+
+    def __post_init__(self) -> None:
+        if self.status is None:
+            if self.skipped:
+                self.status = GateStatus.SKIP
+            elif not self.passed and self.blocking:
+                self.status = GateStatus.BLOCKED
+            else:
+                self.status = GateStatus.PASS if self.passed else GateStatus.FAIL
+        elif not isinstance(self.status, GateStatus):
+            self.status = GateStatus(self.status)
+        self.skipped = self.status == GateStatus.SKIP
+        self.blocking = self.blocking or self.status == GateStatus.BLOCKED
+        self.passed = self.status in (GateStatus.PASS, GateStatus.SKIP)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -30,9 +69,10 @@ class GateResult:
             "passed": self.passed,
             "blocking": self.blocking,
             "skipped": self.skipped,
-            "detail": self.detail,
-            "issues": self.issues[:20],
+            "detail": redact_sensitive(self.detail),
+            "issues": [redact_sensitive(issue) for issue in self.issues[:20]],
             "metrics": self.metrics,
+            "status": self.status.value,
         }
 
 
@@ -69,4 +109,9 @@ class Gate:
 
 class GateSetupError(Exception):
     """门禁因环境/配置缺失无法执行时抛出，流水线将其转为 skipped 而非失败。"""
+    pass
+
+
+class GateEnvironmentError(Exception):
+    """门禁无法可靠执行：目标环境不可达、持续 5xx 或响应格式异常。"""
     pass

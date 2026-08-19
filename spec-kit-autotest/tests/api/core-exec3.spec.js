@@ -18,8 +18,9 @@
 const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
-const { sddProjectData, uniqueTitle } = require('../../utils/testData');
+const { sddProjectData } = require('../../utils/testData');
 const { envTolerant } = require('../../utils/envGuard');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,
@@ -33,16 +34,6 @@ const API = {
 };
 
 describe('【执行层批次3】核心功能 P0', () => {
-  async function createReq(client, overrides = {}) {
-    const meRes = await client.get(API.me());
-    const meData = assertOk(meRes, await meRes.json());
-    const res = await client.post(API.requirements(), {
-      data: requirementData({ reviewerId: meData.id, ...overrides }),
-    });
-    expect(res.status()).toBe(200);
-    return assertOk(res, await res.json());
-  }
-
   /** 创建 SDD 项目；现网偶发 503/HTML 时返回 null（调用处环境性跳过） */
   async function createSddProject(client) {
     const res = await client.post(API.sddProjects(), { data: sddProjectData() });
@@ -73,7 +64,7 @@ describe('【执行层批次3】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -86,7 +77,7 @@ describe('【执行层批次3】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -118,7 +109,7 @@ describe('【执行层批次3】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -132,7 +123,7 @@ describe('【执行层批次3】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -150,7 +141,7 @@ describe('【执行层批次3】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 

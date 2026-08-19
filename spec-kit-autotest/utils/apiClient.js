@@ -1,10 +1,8 @@
 /**
  * API 请求客户端
  * 基于 Playwright request context 封装 REST 调用
- * 支持 JWT 双 token（accessToken + refreshToken）自动刷新
+ * 保存 JWT 双 token；后端无已确认 refresh 契约，401 原样返回，不做伪刷新
  */
-const env = require('../config/env');
-
 class ApiClient {
   /**
    * @param {import('@playwright/test').APIRequestContext} request
@@ -31,31 +29,13 @@ class ApiClient {
   }
 
   /**
-   * 发起请求，token 过期时自动用 refreshToken 重试一次
+   * 发起请求。401 不自动重试，避免继续使用旧 token 制造误判。
    */
   async request_(method, url, { data, params, headers } = {}) {
     const res = await this.request[method](url, {
       data,
       params,
       headers: this.headers(headers),
-    });
-    // token 过期（401）且存在 refreshToken 时刷新重试
-    if (res.status() === 401 && this.refreshToken && method !== 'post') {
-      await this.refreshAccessToken();
-      return this.request[method](url, {
-        data,
-        params,
-        headers: this.headers(headers),
-      });
-    }
-    return res;
-  }
-
-  /** 刷新 access token */
-  async refreshAccessToken() {
-    // 说明：后端未提供独立 refresh 接口，这里通过 session 校验 + 重新登录兜底
-    const res = await this.request.get(`${env.baseURL}${env.api('/auth/session')}`, {
-      headers: this.headers(),
     });
     return res;
   }

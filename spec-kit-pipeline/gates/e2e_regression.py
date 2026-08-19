@@ -14,7 +14,7 @@ import os
 import subprocess
 from typing import List
 
-from .base import Gate, GateResult, GateSetupError
+from .base import Gate, GateResult, GateSetupError, GateStatus
 
 
 class E2ERegressionGate(Gate):
@@ -25,10 +25,12 @@ class E2ERegressionGate(Gate):
         self.autotest_dir = cfg.get("autotest_dir") or (self.config.get("autotest_dir") or "")
         if not self.autotest_dir or not os.path.isdir(self.autotest_dir):
             raise GateSetupError("未配置 Playwright 项目目录（config.autotest_dir 或 gates.e2e_regression.autotest_dir）")
-        self.npm_script = cfg.get("script", "test:api")
+        stage = self.config.get("stage", "default")
+        self.npm_script = (cfg.get("scripts_by_stage") or {}).get(stage, cfg.get("script", "test:api:readonly"))
         self.report_file = cfg.get("report_file", "reports/test-results.json")
         self.min_pass_rate = float(cfg.get("min_pass_rate", 0.95))
         self.timeout = int(cfg.get("timeout", 1800))
+        self.env_error_threshold = int(cfg.get("env_error_threshold", 3))
 
     def _run(self) -> subprocess.CompletedProcess:
         # 不覆盖 reporter：config 已配置 json reporter 输出到 reports/test-results.json
@@ -99,11 +101,19 @@ class E2ERegressionGate(Gate):
         if proc.returncode != 0 and rate >= self.min_pass_rate:
             issues.append("进程退出码非 0 但用例通过率达标，请人工确认是否有未统计的崩溃")
 
+        flaky = int((report.get("stats") or {}).get("flaky", 0)) if isinstance(report, dict) else 0
+        status = GateStatus.FLAKY if flaky else (GateStatus.PASS if rate >= self.min_pass_rate and proc.returncode == 0 else GateStatus.FAIL)
+        combined_output = (proc.stdout or "") + (proc.stderr or "")
+        env_errors = combined_output.count("ENV_ERROR") + combined_output.count("EnvironmentResponseError")
+        if env_errors >= self.env_error_threshold:
+            status = GateStatus.ENV_ERROR
+            issues.append(f"环境异常 {env_errors} 次，达到阈值 {self.env_error_threshold}")
+
         return GateResult(
             name=self.name,
-            passed=rate >= self.min_pass_rate and proc.returncode == 0,
+            status=status,
             blocking=self.blocking,
             detail=f"{self.npm_script}: 通过率 {rate:.1%}（{passed}/{total}）",
             issues=issues,
-            metrics={"total": total, "passed": passed, "failed": failed, "pass_rate": round(rate, 4)},
+            metrics={"total": total, "passed": passed, "failed": failed, "flaky": flaky, "env_errors": env_errors, "pass_rate": round(rate, 4)},
         )

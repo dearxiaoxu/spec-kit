@@ -72,25 +72,56 @@ class ContractDiffGate(Gate):
 
     def _diff(self, base: Dict[str, Set[str]], cur: Dict[str, Set[str]]) -> List[str]:
         changes: List[str] = []
+        marker_names = {"endpoints": "endpoint", "required_fields": "required_field", "enum_values": "enum_value"}
         for key, label in (("endpoints", "端点"), ("required_fields", "必填字段"), ("enum_values", "枚举值")):
             removed = base[key] - cur[key]
             added = cur[key] - base[key]
             for r in sorted(removed):
-                changes.append(f"[{key}] 移除/消失: {r}")
+                changes.append(f"[removed_{marker_names[key]}] {label}移除/消失: {r}")
             for a in sorted(added):
-                changes.append(f"[{key}] 新增: {a}")
+                changes.append(f"[added_{marker_names[key]}] {label}新增: {a}")
         return changes
+
+    def _schema_fallback(self, path: str) -> GateResult:
+        """OpenAPI 不可用时，校验人工基线中的关键端点均有本地自动化契约覆盖。"""
+        baseline = self._load_json(path)
+        contracts = baseline.get("contracts") or []
+        if not contracts:
+            raise GateSetupError(f"Schema 契约基线为空: {path}")
+        autotest_dir = self.config.get("autotest_dir", "")
+        test_root = os.path.join(autotest_dir, "tests", "api")
+        source = ""
+        for root, _, files in os.walk(test_root):
+            for filename in files:
+                if filename.endswith(".js"):
+                    with open(os.path.join(root, filename), "r", encoding="utf-8", errors="ignore") as handle:
+                        source += handle.read()
+        missing = [c.get("endpoint", "?") for c in contracts if c.get("path") not in source]
+        return GateResult(
+            name=self.name,
+            passed=not missing,
+            blocking=self.blocking,
+            detail=f"Schema 兜底契约 {len(contracts)} 项，本地自动化覆盖缺失 {len(missing)} 项",
+            issues=[f"缺少关键契约覆盖: {item}" for item in missing],
+            metrics={"mode": "schema_fallback", "contracts": len(contracts), "missing": len(missing)},
+        )
 
     def run(self) -> GateResult:
         cfg = self.gate_cfg
         base_path = cfg.get("baseline") or os.path.join(self.snapshot_dir, "snapshot.json")
+        if not os.path.isabs(base_path):
+            base_path = os.path.join(self.workdir, base_path)
         cur_path = cfg.get("current")
+        if cur_path and not os.path.isabs(cur_path):
+            cur_path = os.path.join(self.workdir, cur_path)
         if not cur_path:
             cur_path = os.path.join(self.snapshot_dir, "current.json")
-            if not os.path.exists(cur_path):
-                raise GateSetupError(
-                    "缺少当前契约。先执行: python3 pipeline.py --fetch-contract （或 tools/fetch_contract.py）"
-                )
+        if not os.path.exists(cur_path):
+            fallback = cfg.get("schema_fallback")
+            if fallback:
+                fallback_path = fallback if os.path.isabs(fallback) else os.path.join(self.workdir, fallback)
+                return self._schema_fallback(fallback_path)
+            raise GateSetupError("缺少当前 OpenAPI 且未配置 Schema 兜底契约")
 
         base_spec = self._load_json(base_path)
         cur_spec = self._load_json(cur_path)

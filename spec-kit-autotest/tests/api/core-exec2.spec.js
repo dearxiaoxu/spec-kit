@@ -17,8 +17,9 @@
 const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
-const { requirementData, sddProjectData, uniqueTitle } = require('../../utils/testData');
+const { requirementData, sddProjectData } = require('../../utils/testData');
 const { envTolerant } = require('../../utils/envGuard');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,
@@ -76,7 +77,7 @@ describe('【执行层批次2】核心功能 P0', () => {
         expect(body.ok).toBe(false); // 被拒绝也是正确行为
       }
     } finally {
-      await apiClient.delete(API.reqById(req.id)).catch(() => {});
+      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));
     }
   });
 
@@ -102,7 +103,7 @@ describe('【执行层批次2】核心功能 P0', () => {
       // 项目存在即代表"产物生成不等于阶段通过"的前提成立
       expect(id).toBeTruthy();
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -120,7 +121,7 @@ describe('【执行层批次2】核心功能 P0', () => {
       const body = await res.json().catch(() => ({}));
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 
@@ -138,7 +139,7 @@ describe('【执行层批次2】核心功能 P0', () => {
       expect(res.status()).toBeLessThan(500);
       expect(body.ok !== undefined).toBe(true);
     } finally {
-      await apiClient.delete(API.sddById(id)).catch(() => {});
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));
     }
   });
 

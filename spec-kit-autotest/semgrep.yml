@@ -1,0 +1,16 @@
+rules:
+  - id: spec-kit-no-empty-catch
+    message: 禁止静默吞掉异常；必须记录清理失败或重新抛出
+    severity: ERROR
+    languages: [javascript]
+    patterns:
+      - pattern: $PROMISE.catch(() => {})
+  - id: spec-kit-no-credential-log
+    message: 禁止在日志中输出凭据
+    severity: ERROR
+    languages: [javascript]
+    pattern-either:
+      - pattern: console.log(..., $PASSWORD, ...)
+      - pattern: console.log(..., $TOKEN, ...)
+      - pattern: console.warn(..., $PASSWORD, ...)
+      - pattern: console.warn(..., $TOKEN, ...)

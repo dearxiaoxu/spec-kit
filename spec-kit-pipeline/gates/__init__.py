@@ -1,5 +1,5 @@
 """门禁模块包：pipeline.py 通过此文件自动发现并注册所有 Gate。"""
-from .base import Gate, GateResult, GateSetupError
+from .base import Gate, GateEnvironmentError, GateResult, GateSetupError, GateStatus
 from .contract_diff import ContractDiffGate
 from .static_scan import StaticScanGate
 from .pattern_regression import PatternRegressionGate

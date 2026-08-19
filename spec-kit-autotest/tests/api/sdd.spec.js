@@ -5,7 +5,7 @@
 const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
-const { sddProjectData, uniqueTitle } = require('../../utils/testData');
+const { sddProjectData } = require('../../utils/testData');
 
 const API = {
   projects: (scope = 'personal') => `${env.baseURL}${env.api('/sdd/projects')}?scope=${scope}`,

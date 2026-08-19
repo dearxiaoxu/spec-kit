@@ -43,12 +43,13 @@ class PipelineResultTrustTests(unittest.TestCase):
             with open(report_path.removesuffix(".json") + ".md", "r", encoding="utf-8") as handle:
                 markdown = handle.read()
 
-        self.assertEqual(report["summary"], {
+        self.assertEqual({key: report["summary"][key] for key in ("total", "passed", "failed", "skipped")}, {
             "total": 3,
             "passed": 1,
             "failed": 1,
             "skipped": 1,
         })
+        self.assertEqual(report["summary"]["statuses"]["SKIP"], 1)
         self.assertIn("## [SKIP] skipped", markdown)
 
     def test_blocking_gate_exception_keeps_blocking_semantics(self):
