@@ -59,7 +59,19 @@ def run_gate(gate_cls, config: Dict, dry_run: bool = False) -> Optional[GateResu
     except GateSetupError as e:
         return GateResult(name=name, passed=True, skipped=True, detail=f"跳过: {e}")
     except Exception as e:
-        return GateResult(name=name, passed=False, detail=f"门禁执行异常: {e}")
+        return GateResult(
+            name=name,
+            passed=False,
+            blocking=bool(getattr(gate_cls, "blocking", False)),
+            detail=f"门禁执行异常: {e}",
+        )
+
+
+def result_mark(result: GateResult) -> str:
+    """将 GateResult 转成人可读状态；跳过必须与通过严格区分。"""
+    if result.skipped:
+        return "SKIP"
+    return "PASS" if result.passed else "FAIL"
 
 
 def write_report(results: List[GateResult], config: Dict) -> str:
@@ -73,7 +85,7 @@ def write_report(results: List[GateResult], config: Dict) -> str:
         "results": [r.to_dict() for r in results],
         "summary": {
             "total": len(results),
-            "passed": sum(1 for r in results if r.passed),
+            "passed": sum(1 for r in results if r.passed and not r.skipped),
             "failed": sum(1 for r in results if not r.passed),
             "skipped": sum(1 for r in results if r.skipped),
         },
@@ -84,7 +96,7 @@ def write_report(results: List[GateResult], config: Dict) -> str:
 
     md = ["# Spec-Kit 流水线运行报告", ""]
     for r in results:
-        mark = "PASS" if r.passed else ("SKIP" if r.skipped else "FAIL")
+        mark = result_mark(r)
         md.append(f"## [{mark}] {r.name}")
         md.append(f"- {r.detail}")
         if r.issues:
@@ -168,7 +180,7 @@ def main() -> int:
         result = run_gate(cls, config, dry_run=args.dry_run)
         results.append(result)
 
-        mark = "PASS" if result.passed else ("SKIP" if result.skipped else "FAIL")
+        mark = result_mark(result)
         print(f"    [{mark}] {result.detail}")
         for it in result.issues[:5]:
             print(f"      - {it[:140]}")
@@ -187,6 +199,9 @@ def main() -> int:
     if failed_any:
         print("\n[RESULT] FAILED（存在失败项，见报告）")
         return 1
+    if results and all(result.skipped for result in results):
+        print("\n[RESULT] COMPLETED（全部门禁均跳过）")
+        return 0
     print("\n[RESULT] ALL PASS")
     return 0
 

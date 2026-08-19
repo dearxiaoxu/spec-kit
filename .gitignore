@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 依赖
+node_modules/
+
+# 环境配置（含敏感凭据，勿提交）
+.env
+.env.local
+
+# 认证状态（Playwright 登录态）
+.auth/
+auth.json
+
+# 测试产物
+test-results/
+playwright-report/
+blob-report/
+
+# 流水线运行产物（含接口路径与探测结果，勿进公开仓库）
+spec-kit-pipeline/report/
+spec-kit-pipeline/assets/contract/current.json
+spec-kit-pipeline/.pipeline-cache/
+
+# 日志
+*.log
+
+# IDE
+.idea/
+.vscode/

@@ -35,6 +35,12 @@ class E2ERegressionGate(Gate):
         cmd = ["npm", "run", self.npm_script]
         return subprocess.run(cmd, cwd=self.autotest_dir, capture_output=True, text=True, timeout=self.timeout)
 
+    def _clear_stale_report(self) -> None:
+        """删除固定路径上的历史 JSON，防止本次运行误读旧统计。"""
+        path = os.path.join(self.autotest_dir, self.report_file)
+        if os.path.exists(path):
+            os.remove(path)
+
     def _parse_report(self) -> dict:
         path = os.path.join(self.autotest_dir, self.report_file)
         if not os.path.exists(path):
@@ -71,6 +77,7 @@ class E2ERegressionGate(Gate):
         return total, passed, failed
 
     def run(self) -> GateResult:
+        self._clear_stale_report()
         proc = self._run()
         report = self._parse_report()
         total, passed, failed = self._count(report)
