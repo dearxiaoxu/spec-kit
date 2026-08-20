@@ -1,0 +1,1677 @@
+{
+  "schema_version": "1.0",
+  "scan_run_id": "scan-local",
+  "target": {
+    "name": "spec-kit",
+    "environment": "isolated",
+    "version": "unknown"
+  },
+  "assets": {
+    "endpoints": [
+      {
+        "asset_id": "endpoint:GET:/auth/login",
+        "method": "GET",
+        "path": "/auth/login",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-a9fd77c8d51d65ea"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": [
+          "spec-kit-autotest/tests/unit/utils.spec.js"
+        ]
+      },
+      {
+        "asset_id": "endpoint:GET:/auth/session",
+        "method": "GET",
+        "path": "/auth/session",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-6066b704592cb178"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": []
+      },
+      {
+        "asset_id": "endpoint:GET:/requirements",
+        "method": "GET",
+        "path": "/requirements",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-8c7d90d6afb1431a"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": []
+      },
+      {
+        "asset_id": "endpoint:GET:/sdd/projects",
+        "method": "GET",
+        "path": "/sdd/projects",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-2d5a3f43a22be600"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": []
+      },
+      {
+        "asset_id": "endpoint:GET:/jobs",
+        "method": "GET",
+        "path": "/jobs",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-9addfda6eee469b3"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": []
+      },
+      {
+        "asset_id": "endpoint:GET:/quality-gates",
+        "method": "GET",
+        "path": "/quality-gates",
+        "operation": null,
+        "auth": {
+          "required": true,
+          "roles": []
+        },
+        "request_schema": {},
+        "parameters": [],
+        "responses": [],
+        "side_effect": "readonly",
+        "evidence_refs": [
+          "ev-aeaf63539eabc42d"
+        ],
+        "confidence": "medium",
+        "existing_test_refs": []
+      }
+    ],
+    "observed_flows": [],
+    "source_rules": [
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/auth.spec.js",
+        "path": "spec-kit-autotest/tests/api/auth.spec.js",
+        "sha256": "93bed68664579a10b4c0c8c1fe9a58eedcb2eeeb2db91820b2e7628744d0ae44",
+        "evidence_refs": [
+          "ev-8507a9b8e5688d02",
+          "ev-a356ef3a934998eb",
+          "ev-1bbc54002c1f2e7f",
+          "ev-99477a3bc0da2a12",
+          "ev-dc4ced41a41388c0",
+          "ev-82bee1a3a1d4c88c",
+          "ev-5484dff98fe47ce8",
+          "ev-30bd081b9b34c0f4"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/converted_demo.spec.js",
+        "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+        "sha256": "12f789409babe4310eea3e0f032b0f62dddcf613e11b6bcb49355f84725aed00",
+        "evidence_refs": [
+          "ev-15f0fab2b6bfae0a",
+          "ev-6f6f87e1d45576a7",
+          "ev-343a505417d2b2ee",
+          "ev-6c7e1d1c94bcfcbb",
+          "ev-ac1acca8f62a8152",
+          "ev-68665f8cbbb9ef3f",
+          "ev-5ef2ca4a2671e9b5",
+          "ev-035d4b94032215ce",
+          "ev-52e2a5ddf520b684",
+          "ev-d63c3d830947f2c0",
+          "ev-15f4223586d9221a",
+          "ev-af8f9e61d697a237",
+          "ev-9117b61ace8d04ac"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/core-exec.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+        "sha256": "5314f5c50e12410e18c236d3b0372f8bcfdd2d5f6415179add24e5d20975e7ca",
+        "evidence_refs": [
+          "ev-bce96165a928ceee",
+          "ev-ed9ff3489388cec5",
+          "ev-2b213e427e251e02",
+          "ev-74fa9d55d68a6a75",
+          "ev-7d6078cc5be519f5",
+          "ev-39868f4215dd986e",
+          "ev-09bfc994af243c5c",
+          "ev-214b5c6e4414cb4f",
+          "ev-ca5888302124117a",
+          "ev-720dde38230a2dde",
+          "ev-5d88cc3ffa569099",
+          "ev-7872daf2ff709961",
+          "ev-46085cd77704c8c4",
+          "ev-361d4d0b04ad1da7",
+          "ev-ab1fbed156e9291a",
+          "ev-84902187ca1f2942",
+          "ev-a832496d8efd39c6",
+          "ev-8fc17dff8d55d6ce",
+          "ev-31f9ea34a36970af",
+          "ev-b9f41100c71e1f77",
+          "ev-cc79054312ebbe54",
+          "ev-160c441763ffcfd4",
+          "ev-3e252e68753521b9",
+          "ev-5686065041dd8c37"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/core-exec2.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+        "sha256": "0cca22da23e26a1ea14a9f3f0ca4a4ae4a0ccce23687cc717aae962f05d398fe",
+        "evidence_refs": [
+          "ev-df2e21e113e52451",
+          "ev-940bd0e8f3767e29",
+          "ev-09fc5e0faffa1f24",
+          "ev-9a646b213d25687c",
+          "ev-13575e67a74f5cb5",
+          "ev-dc0ee83c7975f174",
+          "ev-8cd9de1726eb3d5e",
+          "ev-a3b3e0af055968fc",
+          "ev-5f7ab8efc2fe0db0",
+          "ev-4f60cb28eb1760a2",
+          "ev-fb2289067a4b557b",
+          "ev-aadc04fd75472b43",
+          "ev-2e018990e3193979",
+          "ev-6df2ac81add3be6b",
+          "ev-d36f7c75aa6ccdf5",
+          "ev-e8e2df1374b59338",
+          "ev-1a4aa070fb1ae747",
+          "ev-042872a0f21e08e6",
+          "ev-9a8890c4684bb425",
+          "ev-e498023a5c0ec44f"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/core-exec3.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+        "sha256": "9a89f9c2d8b0d2ab56822b8c8470b0b94ad1d30df5f8438daf55d8d4a1ce89a3",
+        "evidence_refs": [
+          "ev-4cb4dd302f3044b7",
+          "ev-f360c5d28581802e",
+          "ev-240dff62d1f1bd47",
+          "ev-57ce54a159ff86be",
+          "ev-a1ab639fa6f61801",
+          "ev-0931395e16204b41",
+          "ev-631adc80b06ec46e",
+          "ev-bc4f5f5448e4ab98",
+          "ev-58df37ffc912d4e5",
+          "ev-05cf14f247ee0ee3",
+          "ev-7e3ba7172f367818",
+          "ev-9d9a78d0acd3c70c",
+          "ev-9af821393746e61e",
+          "ev-f6e31437d8ff2df3",
+          "ev-7aa26acd98e9e49f",
+          "ev-16a28904d0bddbae",
+          "ev-b40912a501afa698",
+          "ev-f15e96136b54c0e0",
+          "ev-e29e09f0ac525f75",
+          "ev-69675cd7ac68091f",
+          "ev-deacfdf705afe821"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/core-exec4.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+        "sha256": "b4e6d4d44bd02293092659d6151a515bc4aeb2d9607e8155e3f9a5e43af8f3c2",
+        "evidence_refs": [
+          "ev-2c4be7e67697b8b6",
+          "ev-b9b3c23a103eef39",
+          "ev-a2c7b8b1c9b5f9c3",
+          "ev-66bc6b63c3d2c8c8",
+          "ev-cd6a70c4b3b7fa76",
+          "ev-e2503eec6178d6b4",
+          "ev-81ecddd91467d3d3",
+          "ev-3c38d0f3bbd77875"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/requirements.spec.js",
+        "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+        "sha256": "fda0f8f1ac675b06f9cc941e5c868e90faff12368e0cac184a2d793ae64e6571",
+        "evidence_refs": [
+          "ev-eca80b0e8aa1b11d",
+          "ev-50ea12ed013deb61",
+          "ev-2830c4299a884c89",
+          "ev-63ed672950e5d236",
+          "ev-54faf8cea9f786fe",
+          "ev-260b8573bc94338f",
+          "ev-7258d55b739865c0",
+          "ev-e12d6ccfcd6fca1e",
+          "ev-eb71877de93dd1f2",
+          "ev-ecd4d0be9e2e4569",
+          "ev-9786145337e7bb89",
+          "ev-c8825102353b5cfb",
+          "ev-5b2797319eb61646",
+          "ev-6018c859eae39131"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/sdd.spec.js",
+        "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+        "sha256": "90c2e9e26b9bd05ee2ff7063ee858a4dfef617a0b7af1b9caa95da15ed9bdfb9",
+        "evidence_refs": [
+          "ev-f9b31d96fba9825b",
+          "ev-6176f4876e5f61e2",
+          "ev-8bd44a6e21bb341e",
+          "ev-75857658376a722e",
+          "ev-799fa4466e7a5566",
+          "ev-b2bc9c6d520facaf",
+          "ev-f0e55fc53ad87ac6",
+          "ev-aa86325489202ce8",
+          "ev-c7eb320fed6ade57",
+          "ev-d44874585c2d84e0",
+          "ev-a45eeb7031f0f21e"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/api/security.spec.js",
+        "path": "spec-kit-autotest/tests/api/security.spec.js",
+        "sha256": "1c61b17fd5080ec5896a4cb25638c89686a4d19dc52e92f8a480a1503a07ded3",
+        "evidence_refs": [
+          "ev-6f19b18738c933c8",
+          "ev-2ad8039256d48bdd",
+          "ev-0059bd23e9245c9c",
+          "ev-985b79f620d964f3",
+          "ev-64b68b725ceb1574",
+          "ev-e8655a7af5c51afd"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/tests/unit/utils.spec.js",
+        "path": "spec-kit-autotest/tests/unit/utils.spec.js",
+        "sha256": "6bd550aff2fa20e066185a7d5820695d304a29ddcc2f73ccf482b4936557306a",
+        "evidence_refs": [
+          "ev-6a884492fc0af129",
+          "ev-c937d29849cb39cb",
+          "ev-49b5acccd26dc7bc"
+        ],
+        "kind": "source"
+      },
+      {
+        "asset_id": "source:spec-kit-autotest/utils/auth.js",
+        "path": "spec-kit-autotest/utils/auth.js",
+        "sha256": "5f824dbe9090ceedacf2f3185a97d993abb0b3d01a98d4225b6f69178e18057a",
+        "evidence_refs": [
+          "ev-b46d9f8af6ad7670"
+        ],
+        "kind": "source"
+      }
+    ],
+    "tests": [
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/auth.spec.js",
+        "path": "spec-kit-autotest/tests/api/auth.spec.js",
+        "sha256": "93bed68664579a10b4c0c8c1fe9a58eedcb2eeeb2db91820b2e7628744d0ae44",
+        "titles": [
+          "登录-正确凭据返回 token",
+          "登录-错误密码返回失败",
+          "登录-空字段校验",
+          "会话校验-未登录返回401",
+          "会话校验-已登录返回用户信息",
+          "获取当前用户信息",
+          "登出-接口可调用",
+          "注册-空字段被拒绝",
+          "注册-正常凭据可注册（@smoke）"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-8507a9b8e5688d02",
+          "ev-a356ef3a934998eb",
+          "ev-1bbc54002c1f2e7f",
+          "ev-99477a3bc0da2a12",
+          "ev-dc4ced41a41388c0",
+          "ev-82bee1a3a1d4c88c",
+          "ev-5484dff98fe47ce8",
+          "ev-30bd081b9b34c0f4"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/converted_demo.spec.js",
+        "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+        "sha256": "12f789409babe4310eea3e0f032b0f62dddcf613e11b6bcb49355f84725aed00",
+        "titles": [
+          "字段校验-正常数据创建成功",
+          "字段校验-标题为空被拒",
+          "字段校验-标题超长被拒或截断",
+          "横向越权-未登录访问用户数据返回401",
+          "横向越权-member访问管理后台被拒绝",
+          "横向越权-未登录访问需求列表返回401",
+          "Prompt注入-对话发送注入串不越权"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-15f0fab2b6bfae0a",
+          "ev-6f6f87e1d45576a7",
+          "ev-343a505417d2b2ee",
+          "ev-6c7e1d1c94bcfcbb",
+          "ev-ac1acca8f62a8152",
+          "ev-68665f8cbbb9ef3f",
+          "ev-5ef2ca4a2671e9b5",
+          "ev-035d4b94032215ce",
+          "ev-52e2a5ddf520b684",
+          "ev-d63c3d830947f2c0",
+          "ev-15f4223586d9221a",
+          "ev-af8f9e61d697a237",
+          "ev-9117b61ace8d04ac"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/core-exec.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+        "sha256": "5314f5c50e12410e18c236d3b0372f8bcfdd2d5f6415179add24e5d20975e7ca",
+        "titles": [
+          "TC-SSE-001 作业列表与详情结构完整",
+          "TC-SSE-001 作业详情-未知id返回错误而非崩溃",
+          "TC-SEC-001 未登录访问受保护接口返回401",
+          "TC-SEC-001 member访问管理后台被拒绝",
+          "TC-SEC-001 导出响应不含明文密钥字段",
+          "TC-REQ-APP-002 C级需求自批审批被拒",
+          "TC-REQ-APP-003 重复转SDD幂等",
+          "TC-TASK-001 SDD任务接口结构可达且非纯Markdown",
+          "TC-SDD-005 质量门禁缺必填字段被拦截",
+          "TC-SDD-005 质量门禁绑定需求后可调用"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-bce96165a928ceee",
+          "ev-ed9ff3489388cec5",
+          "ev-2b213e427e251e02",
+          "ev-74fa9d55d68a6a75",
+          "ev-7d6078cc5be519f5",
+          "ev-39868f4215dd986e",
+          "ev-09bfc994af243c5c",
+          "ev-214b5c6e4414cb4f",
+          "ev-ca5888302124117a",
+          "ev-720dde38230a2dde",
+          "ev-5d88cc3ffa569099",
+          "ev-7872daf2ff709961",
+          "ev-46085cd77704c8c4",
+          "ev-361d4d0b04ad1da7",
+          "ev-ab1fbed156e9291a",
+          "ev-84902187ca1f2942",
+          "ev-a832496d8efd39c6",
+          "ev-8fc17dff8d55d6ce",
+          "ev-31f9ea34a36970af",
+          "ev-b9f41100c71e1f77",
+          "ev-cc79054312ebbe54",
+          "ev-160c441763ffcfd4",
+          "ev-3e252e68753521b9",
+          "ev-5686065041dd8c37"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/core-exec2.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+        "sha256": "0cca22da23e26a1ea14a9f3f0ca4a4ae4a0ccce23687cc717aae962f05d398fe",
+        "titles": [
+          "TC-REQ-APP-001 C级需求单角色审批不能直接完成",
+          "TC-SDD-001 新项目阶段状态未解锁",
+          "TC-SDD-002 Clarify分析接口可达且含问题结构",
+          "TC-IMPL-001 未批准任务执行被拒或需前置门禁",
+          "TC-SSE-003 作业状态可查询且未知id不崩溃",
+          "TC-HAR-001 无权限客户端审批类操作被拒",
+          "TC-HAR-001 匿名访问需求操作被拒"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-df2e21e113e52451",
+          "ev-940bd0e8f3767e29",
+          "ev-09fc5e0faffa1f24",
+          "ev-9a646b213d25687c",
+          "ev-13575e67a74f5cb5",
+          "ev-dc0ee83c7975f174",
+          "ev-8cd9de1726eb3d5e",
+          "ev-a3b3e0af055968fc",
+          "ev-5f7ab8efc2fe0db0",
+          "ev-4f60cb28eb1760a2",
+          "ev-fb2289067a4b557b",
+          "ev-aadc04fd75472b43",
+          "ev-2e018990e3193979",
+          "ev-6df2ac81add3be6b",
+          "ev-d36f7c75aa6ccdf5",
+          "ev-e8e2df1374b59338",
+          "ev-1a4aa070fb1ae747",
+          "ev-042872a0f21e08e6",
+          "ev-9a8890c4684bb425",
+          "ev-e498023a5c0ec44f"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/core-exec3.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+        "sha256": "9a89f9c2d8b0d2ab56822b8c8470b0b94ad1d30df5f8438daf55d8d4a1ce89a3",
+        "titles": [
+          "TC-SDD-003 产物更新接口缺前置时受控失败",
+          "TC-SDD-003 归档接口可达（非AI）",
+          "TC-SDD-004 未认证访问验证接口被拒",
+          "TC-TASK-002 任务接口可达且结构正确",
+          "TC-TASK-002 未批准任务执行被拦截",
+          "TC-TASK-003 任务重生成缺前置时受控失败",
+          "TC-SSE-002 作业列表重复查询幂等",
+          "TC-HAR-003 无权限访问审批类接口被拒",
+          "TC-HAR-004 风险接受接口缺关键字段被拒"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-4cb4dd302f3044b7",
+          "ev-f360c5d28581802e",
+          "ev-240dff62d1f1bd47",
+          "ev-57ce54a159ff86be",
+          "ev-a1ab639fa6f61801",
+          "ev-0931395e16204b41",
+          "ev-631adc80b06ec46e",
+          "ev-bc4f5f5448e4ab98",
+          "ev-58df37ffc912d4e5",
+          "ev-05cf14f247ee0ee3",
+          "ev-7e3ba7172f367818",
+          "ev-9d9a78d0acd3c70c",
+          "ev-9af821393746e61e",
+          "ev-f6e31437d8ff2df3",
+          "ev-7aa26acd98e9e49f",
+          "ev-16a28904d0bddbae",
+          "ev-b40912a501afa698",
+          "ev-f15e96136b54c0e0",
+          "ev-e29e09f0ac525f75",
+          "ev-69675cd7ac68091f",
+          "ev-deacfdf705afe821"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/core-exec4.spec.js",
+        "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+        "sha256": "b4e6d4d44bd02293092659d6151a515bc4aeb2d9607e8155e3f9a5e43af8f3c2",
+        "titles": [
+          "TC-AI-REQ-003 注入串被受理但不崩溃",
+          "TC-REC-001 数据导出JSON可解析且关键集合存在"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-2c4be7e67697b8b6",
+          "ev-b9b3c23a103eef39",
+          "ev-a2c7b8b1c9b5f9c3",
+          "ev-66bc6b63c3d2c8c8",
+          "ev-cd6a70c4b3b7fa76",
+          "ev-e2503eec6178d6b4",
+          "ev-81ecddd91467d3d3",
+          "ev-3c38d0f3bbd77875"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/requirements.spec.js",
+        "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+        "sha256": "fda0f8f1ac675b06f9cc941e5c868e90faff12368e0cac184a2d793ae64e6571",
+        "titles": [
+          "创建需求-成功",
+          "创建需求-必填项缺失被拒",
+          "需求列表-个人空间",
+          "需求列表-团队空间",
+          "需求详情-存在",
+          "需求详情-不存在的ID",
+          "需求状态流转-提交审核",
+          "需求删除-成功",
+          "越权-未登录访问需求列表"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-eca80b0e8aa1b11d",
+          "ev-50ea12ed013deb61",
+          "ev-2830c4299a884c89",
+          "ev-63ed672950e5d236",
+          "ev-54faf8cea9f786fe",
+          "ev-260b8573bc94338f",
+          "ev-7258d55b739865c0",
+          "ev-e12d6ccfcd6fca1e",
+          "ev-eb71877de93dd1f2",
+          "ev-ecd4d0be9e2e4569",
+          "ev-9786145337e7bb89",
+          "ev-c8825102353b5cfb",
+          "ev-5b2797319eb61646",
+          "ev-6018c859eae39131"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/sdd.spec.js",
+        "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+        "sha256": "90c2e9e26b9bd05ee2ff7063ee858a4dfef617a0b7af1b9caa95da15ed9bdfb9",
+        "titles": [
+          "创建SDD项目-成功",
+          "SDD项目列表-个人空间",
+          "SDD项目详情",
+          "SDD项目-校验清单生成",
+          "SDD项目-归档",
+          "SDD项目-删除",
+          "越权-未登录访问SDD列表"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-f9b31d96fba9825b",
+          "ev-6176f4876e5f61e2",
+          "ev-8bd44a6e21bb341e",
+          "ev-75857658376a722e",
+          "ev-799fa4466e7a5566",
+          "ev-b2bc9c6d520facaf",
+          "ev-f0e55fc53ad87ac6",
+          "ev-aa86325489202ce8",
+          "ev-c7eb320fed6ade57",
+          "ev-d44874585c2d84e0",
+          "ev-a45eeb7031f0f21e"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/api/security.spec.js",
+        "path": "spec-kit-autotest/tests/api/security.spec.js",
+        "sha256": "1c61b17fd5080ec5896a4cb25638c89686a4d19dc52e92f8a480a1503a07ded3",
+        "titles": [
+          "未登录访问受保护接口返回401",
+          "未登录访问需求列表返回401",
+          "member访问管理后台接口被拒绝",
+          "SQL注入-登录接口无害探测",
+          "XSS-创建需求标题含脚本被转义或拒绝",
+          "响应头-安全基线检查"
+        ],
+        "covered_paths": [],
+        "evidence_refs": [
+          "ev-6f19b18738c933c8",
+          "ev-2ad8039256d48bdd",
+          "ev-0059bd23e9245c9c",
+          "ev-985b79f620d964f3",
+          "ev-64b68b725ceb1574",
+          "ev-e8655a7af5c51afd"
+        ]
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/ui/inbox.spec.js",
+        "path": "spec-kit-autotest/tests/ui/inbox.spec.js",
+        "sha256": "bf9f8d1c1f740cc03dfbcb7cf9ebea33c6d5a54042514ad4dd2311916539a141",
+        "titles": [
+          "收件箱默认展示空状态或待办列表",
+          "新建待办成功出现在列表",
+          "时间过滤标签可切换",
+          "优先级过滤可用"
+        ],
+        "covered_paths": [],
+        "evidence_refs": []
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/ui/login-demo.spec.js",
+        "path": "spec-kit-autotest/tests/ui/login-demo.spec.js",
+        "sha256": "75fae9a46addb12e373ee3a038e6dbdcdaaa105e0df21cc1a5ac95bd88bdf2be",
+        "titles": [
+          "① 正确登录：不仅跳转成功，还要断言双 token 真实写入（人工灵魂）",
+          ".",
+          "② 错误密码：必须断言",
+          "③ 空字段提交：前端校验拦截，且不产生 token（人工灵魂）",
+          "④ 未登录访问受保护页：应被重定向回登录页（人工灵魂，越权基线）",
+          "⑤ 会话保持：登录后刷新页面仍保持登录态（人工灵魂，JWT 校验）"
+        ],
+        "covered_paths": [],
+        "evidence_refs": []
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/ui/login.spec.js",
+        "path": "spec-kit-autotest/tests/ui/login.spec.js",
+        "sha256": "b9d326d09f15133efad0846fd8ce58920283310462b0d5bc51b5baae8106cdb0",
+        "titles": [
+          "正确凭据登录成功跳转收件箱（@smoke）",
+          "错误密码提示失败且不跳转",
+          "空字段提交被前端校验拦截",
+          "登录成功后可访问受保护页面"
+        ],
+        "covered_paths": [],
+        "evidence_refs": []
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/ui/requirements-demo.spec.js",
+        "path": "spec-kit-autotest/tests/ui/requirements-demo.spec.js",
+        "sha256": "e5874a8b53df185e73228256163a9588b7f34bfe02eeb9a39e9c1ab346386116",
+        "titles": [
+          "① 状态筛选正确性：点",
+          "② 状态筛选正确性：点",
+          "③ 个人/团队空间切换：切换后页面正常加载且可切回（人工灵魂，数据隔离基线）",
+          "④ 新建需求弹窗：21 字段表单完整呈现，含折叠面板（人工灵魂，方案 6.2 高风险区）",
+          "⑤ 新建需求必填校验：只填标题点创建，应提示缺失必填项且不关闭弹窗（人工灵魂，防"
+        ],
+        "covered_paths": [],
+        "evidence_refs": []
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/ui/requirements.spec.js",
+        "path": "spec-kit-autotest/tests/ui/requirements.spec.js",
+        "sha256": "fd6c3bdf1a3eab65bad0aef4cccb0db0620a998b7f007f119d7fa4b78636802d",
+        "titles": [
+          "需求列表页加载",
+          "新建需求-必填校验",
+          "新建需求-完整填写创建成功"
+        ],
+        "covered_paths": [],
+        "evidence_refs": []
+      },
+      {
+        "asset_id": "test:spec-kit-autotest/tests/unit/utils.spec.js",
+        "path": "spec-kit-autotest/tests/unit/utils.spec.js",
+        "sha256": "6bd550aff2fa20e066185a7d5820695d304a29ddcc2f73ccf482b4936557306a",
+        "titles": [
+          "env.api 统一拼接 API 前缀",
+          "时间戳与标题生成器返回非空且带业务前缀",
+          "各类数据生成器支持覆盖默认字段",
+          "默认请求头包含 JSON，设置 token 后带 Bearer",
+          "GET 收到 401 时原样返回且不伪刷新",
+          "POST 收到 401 不会循环重试",
+          "assertOk 返回 data，异常结构抛出可诊断错误",
+          "503 和 HTML 响应被分类为 ENV_ERROR",
+          "ResourceTracker 逆序清理并接受 404",
+          "ResourceTracker 报告残留资源",
+          "safeCleanup 不再静默吞掉清理失败",
+          "成功登录后保存双 token",
+          "登录失败抛出包含 HTTP 状态的错误"
+        ],
+        "covered_paths": [
+          "/api/v1/auth/login"
+        ],
+        "evidence_refs": [
+          "ev-6a884492fc0af129",
+          "ev-c937d29849cb39cb",
+          "ev-49b5acccd26dc7bc"
+        ]
+      }
+    ],
+    "unreadable": []
+  },
+  "evidence": [
+    {
+      "evidence_id": "ev-a9fd77c8d51d65ea",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/0"
+    },
+    {
+      "evidence_id": "ev-6066b704592cb178",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/1"
+    },
+    {
+      "evidence_id": "ev-8c7d90d6afb1431a",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/2"
+    },
+    {
+      "evidence_id": "ev-2d5a3f43a22be600",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/3"
+    },
+    {
+      "evidence_id": "ev-9addfda6eee469b3",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/4"
+    },
+    {
+      "evidence_id": "ev-aeaf63539eabc42d",
+      "kind": "contract",
+      "path": "spec-kit-pipeline/assets/contract/key-contracts.json",
+      "location": "/contracts/5"
+    },
+    {
+      "evidence_id": "ev-8507a9b8e5688d02",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:11",
+      "detail": "  login: () => `${env.baseURL}${env.api('/auth/login')}`,"
+    },
+    {
+      "evidence_id": "ev-a356ef3a934998eb",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:12",
+      "detail": "  session: () => `${env.baseURL}${env.api('/auth/session')}`,"
+    },
+    {
+      "evidence_id": "ev-1bbc54002c1f2e7f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:13",
+      "detail": "  logout: () => `${env.baseURL}${env.api('/auth/logout')}`,"
+    },
+    {
+      "evidence_id": "ev-99477a3bc0da2a12",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:14",
+      "detail": "  register: () => `${env.baseURL}${env.api('/auth/register')}`,"
+    },
+    {
+      "evidence_id": "ev-dc4ced41a41388c0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:15",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-82bee1a3a1d4c88c",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:54",
+      "detail": "    const res = await apiClient.get(API.session());"
+    },
+    {
+      "evidence_id": "ev-5484dff98fe47ce8",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:64",
+      "detail": "    const res = await apiClient.get(API.me());"
+    },
+    {
+      "evidence_id": "ev-30bd081b9b34c0f4",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/auth.spec.js",
+      "location": "line:71",
+      "detail": "    const res = await apiClient.post(API.logout(), {});"
+    },
+    {
+      "evidence_id": "ev-15f0fab2b6bfae0a",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:22",
+      "detail": "  requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-6f6f87e1d45576a7",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:23",
+      "detail": "  reqById: (id) => `${env.baseURL}${env.api(`/requirements/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-343a505417d2b2ee",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:24",
+      "detail": "  conversations: () => `${env.baseURL}${env.api('/conversations')}`,"
+    },
+    {
+      "evidence_id": "ev-6c7e1d1c94bcfcbb",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:25",
+      "detail": "  convMessages: (id) => `${env.baseURL}${env.api(`/conversations/${id}/messages`)}`,"
+    },
+    {
+      "evidence_id": "ev-ac1acca8f62a8152",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:26",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-68665f8cbbb9ef3f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:27",
+      "detail": "  adminModels: () => `${env.baseURL}${env.api('/admin/ai-models')}`,"
+    },
+    {
+      "evidence_id": "ev-5ef2ca4a2671e9b5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:55",
+      "detail": "    await apiClient.delete(API.reqById(created.id)); // 清理，对齐方案B受控写操作"
+    },
+    {
+      "evidence_id": "ev-035d4b94032215ce",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:59",
+      "detail": "    const res = await apiClient.post(API.requirements(), {"
+    },
+    {
+      "evidence_id": "ev-52e2a5ddf520b684",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:68",
+      "detail": "    const res = await apiClient.post(API.requirements(), {"
+    },
+    {
+      "evidence_id": "ev-d63c3d830947f2c0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:94",
+      "detail": "    const res = await apiClient.get(API.adminModels());"
+    },
+    {
+      "evidence_id": "ev-15f4223586d9221a",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:110",
+      "detail": "    const convRes = await apiClient.post(API.conversations(), { data: { title: uniqueTitle('注入测试') } });"
+    },
+    {
+      "evidence_id": "ev-af8f9e61d697a237",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:116",
+      "detail": "    const msgRes = await apiClient.post(API.convMessages(convId), { data: { content: injectText } });"
+    },
+    {
+      "evidence_id": "ev-9117b61ace8d04ac",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/converted_demo.spec.js",
+      "location": "line:123",
+      "detail": "    await safeCleanup(`conversation:${convId}`, () => apiClient.delete(`${env.baseURL}${env.api(`/conversations/${convId}`)}`));"
+    },
+    {
+      "evidence_id": "ev-bce96165a928ceee",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:25",
+      "detail": "  requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-ed9ff3489388cec5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:26",
+      "detail": "  reqById: (id) => `${env.baseURL}${env.api(`/requirements/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-2b213e427e251e02",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:27",
+      "detail": "  reqAction: (id, act) => `${env.baseURL}${env.api(`/requirements/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-74fa9d55d68a6a75",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:28",
+      "detail": "  jobs: () => `${env.baseURL}${env.api('/jobs')}`,"
+    },
+    {
+      "evidence_id": "ev-7d6078cc5be519f5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:29",
+      "detail": "  jobById: (id) => `${env.baseURL}${env.api(`/jobs/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-39868f4215dd986e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:30",
+      "detail": "  export: () => `${env.baseURL}${env.api('/data/export')}`,"
+    },
+    {
+      "evidence_id": "ev-09bfc994af243c5c",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:31",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-214b5c6e4414cb4f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:32",
+      "detail": "  qualityGates: () => `${env.baseURL}${env.api('/quality-gates')}`,"
+    },
+    {
+      "evidence_id": "ev-ca5888302124117a",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:33",
+      "detail": "  adminModels: () => `${env.baseURL}${env.api('/admin/ai-models')}`,"
+    },
+    {
+      "evidence_id": "ev-720dde38230a2dde",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:34",
+      "detail": "  sddProjects: () => `${env.baseURL}${env.api('/sdd/projects')}?scope=personal`,"
+    },
+    {
+      "evidence_id": "ev-5d88cc3ffa569099",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:56",
+      "detail": "    const listRes = await apiClient.get(API.jobs());"
+    },
+    {
+      "evidence_id": "ev-7872daf2ff709961",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:77",
+      "detail": "    const res = await apiClient.get(API.jobById('non-existent-job-id'));"
+    },
+    {
+      "evidence_id": "ev-46085cd77704c8c4",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:96",
+      "detail": "    const res = await apiClient.get(API.adminModels());"
+    },
+    {
+      "evidence_id": "ev-361d4d0b04ad1da7",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:101",
+      "detail": "    const res = await apiClient.get(API.export());"
+    },
+    {
+      "evidence_id": "ev-ab1fbed156e9291a",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:134",
+      "detail": "      const submitRes = await apiClient.post(API.reqAction(req.id, 'submit'), {});"
+    },
+    {
+      "evidence_id": "ev-84902187ca1f2942",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:138",
+      "detail": "      const approveRes = await apiClient.post(API.reqAction(req.id, 'approve'), {});"
+    },
+    {
+      "evidence_id": "ev-a832496d8efd39c6",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:143",
+      "detail": "      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));"
+    },
+    {
+      "evidence_id": "ev-8fc17dff8d55d6ce",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:155",
+      "detail": "      const r1 = await apiClient.post(API.reqAction(req.id, 'convert-to-sdd'), {});"
+    },
+    {
+      "evidence_id": "ev-31f9ea34a36970af",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:156",
+      "detail": "      const r2 = await apiClient.post(API.reqAction(req.id, 'convert-to-sdd'), {});"
+    },
+    {
+      "evidence_id": "ev-b9f41100c71e1f77",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:169",
+      "detail": "      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));"
+    },
+    {
+      "evidence_id": "ev-cc79054312ebbe54",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:180",
+      "detail": "    const res = await apiClient.get(API.sddProjects());"
+    },
+    {
+      "evidence_id": "ev-160c441763ffcfd4",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:194",
+      "detail": "    const res = await apiClient.post(API.qualityGates(), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-3e252e68753521b9",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:205",
+      "detail": "      const res = await apiClient.post(API.qualityGates(), { data: { requirementId: req.id } });"
+    },
+    {
+      "evidence_id": "ev-5686065041dd8c37",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec.spec.js",
+      "location": "line:211",
+      "detail": "      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));"
+    },
+    {
+      "evidence_id": "ev-df2e21e113e52451",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:25",
+      "detail": "  requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-940bd0e8f3767e29",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:26",
+      "detail": "  reqById: (id) => `${env.baseURL}${env.api(`/requirements/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-09fc5e0faffa1f24",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:27",
+      "detail": "  reqAction: (id, act) => `${env.baseURL}${env.api(`/requirements/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-9a646b213d25687c",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:28",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-13575e67a74f5cb5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:29",
+      "detail": "  jobs: () => `${env.baseURL}${env.api('/jobs')}`,"
+    },
+    {
+      "evidence_id": "ev-dc0ee83c7975f174",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:30",
+      "detail": "  jobById: (id) => `${env.baseURL}${env.api(`/jobs/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-8cd9de1726eb3d5e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:31",
+      "detail": "  sddProjects: (scope = 'personal') => `${env.baseURL}${env.api('/sdd/projects')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-a3b3e0af055968fc",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:32",
+      "detail": "  sddById: (id) => `${env.baseURL}${env.api(`/sdd/projects/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-5f7ab8efc2fe0db0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:33",
+      "detail": "  sddAction: (id, act) => `${env.baseURL}${env.api(`/sdd/projects/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-4f60cb28eb1760a2",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:68",
+      "detail": "      const sub = await apiClient.post(API.reqAction(req.id, 'submit'), {});"
+    },
+    {
+      "evidence_id": "ev-fb2289067a4b557b",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:70",
+      "detail": "      const appr = await apiClient.post(API.reqAction(req.id, 'approve'), {});"
+    },
+    {
+      "evidence_id": "ev-aadc04fd75472b43",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:80",
+      "detail": "      await safeCleanup(`requirement:${req.id}`, () => apiClient.delete(API.reqById(req.id)));"
+    },
+    {
+      "evidence_id": "ev-2e018990e3193979",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:95",
+      "detail": "      const detail = await apiClient.get(API.sddById(id));"
+    },
+    {
+      "evidence_id": "ev-6df2ac81add3be6b",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:106",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-d36f7c75aa6ccdf5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:118",
+      "detail": "      const res = await apiClient.post(API.sddAction(id, 'clarify/analyze'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-e8e2df1374b59338",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:124",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-1a4aa070fb1ae747",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:136",
+      "detail": "      const res = await apiClient.post(API.sddAction(id, 'implement/execute'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-042872a0f21e08e6",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:142",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-9a8890c4684bb425",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:152",
+      "detail": "    const list = await apiClient.get(API.jobs());"
+    },
+    {
+      "evidence_id": "ev-e498023a5c0ec44f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec2.spec.js",
+      "location": "line:164",
+      "detail": "    const miss = await apiClient.get(API.jobById('unknown-job-xyz'));"
+    },
+    {
+      "evidence_id": "ev-4cb4dd302f3044b7",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:26",
+      "detail": "  requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-f360c5d28581802e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:27",
+      "detail": "  reqById: (id) => `${env.baseURL}${env.api(`/requirements/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-240dff62d1f1bd47",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:28",
+      "detail": "  reqAction: (id, act) => `${env.baseURL}${env.api(`/requirements/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-57ce54a159ff86be",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:29",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-a1ab639fa6f61801",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:30",
+      "detail": "  jobs: () => `${env.baseURL}${env.api('/jobs')}`,"
+    },
+    {
+      "evidence_id": "ev-0931395e16204b41",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:31",
+      "detail": "  sddProjects: (scope = 'personal') => `${env.baseURL}${env.api('/sdd/projects')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-631adc80b06ec46e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:32",
+      "detail": "  sddById: (id) => `${env.baseURL}${env.api(`/sdd/projects/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-bc4f5f5448e4ab98",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:33",
+      "detail": "  sddAction: (id, act) => `${env.baseURL}${env.api(`/sdd/projects/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-58df37ffc912d4e5",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:61",
+      "detail": "      const res = await apiClient.put(API.sddAction(id, 'artifacts/spec/1'), { data: { content: 'changed' } });"
+    },
+    {
+      "evidence_id": "ev-05cf14f247ee0ee3",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:67",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-7e3ba7172f367818",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:74",
+      "detail": "      const res = await apiClient.post(API.sddAction(id, 'archive'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-9d9a78d0acd3c70c",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:80",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-9af821393746e61e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:105",
+      "detail": "      const res = await apiClient.get(API.sddAction(id, 'tasks'));"
+    },
+    {
+      "evidence_id": "ev-f6e31437d8ff2df3",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:112",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-7aa26acd98e9e49f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:119",
+      "detail": "      const res = await apiClient.post(API.sddAction(id, 'implement/execute'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-16a28904d0bddbae",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:126",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-b40912a501afa698",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:138",
+      "detail": "      const res = await apiClient.post(API.sddAction(id, 'tasks/regenerate'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-f15e96136b54c0e0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:144",
+      "detail": "      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.sddById(id)));"
+    },
+    {
+      "evidence_id": "ev-e29e09f0ac525f75",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:154",
+      "detail": "    const r1 = await apiClient.get(API.jobs());"
+    },
+    {
+      "evidence_id": "ev-69675cd7ac68091f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:158",
+      "detail": "    const r2 = await apiClient.get(API.jobs());"
+    },
+    {
+      "evidence_id": "ev-deacfdf705afe821",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec3.spec.js",
+      "location": "line:188",
+      "detail": "    const res = await apiClient.post(API.sddAction('fake-id', 'verify/issues/1/disposition'), { data: {} });"
+    },
+    {
+      "evidence_id": "ev-2c4be7e67697b8b6",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:24",
+      "detail": "  conversations: () => `${env.baseURL}${env.api('/conversations')}`,"
+    },
+    {
+      "evidence_id": "ev-b9b3c23a103eef39",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:25",
+      "detail": "  convMessages: (id) => `${env.baseURL}${env.api(`/conversations/${id}/messages`)}`,"
+    },
+    {
+      "evidence_id": "ev-a2c7b8b1c9b5f9c3",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:26",
+      "detail": "  convById: (id) => `${env.baseURL}${env.api(`/conversations/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-66bc6b63c3d2c8c8",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:27",
+      "detail": "  export: () => `${env.baseURL}${env.api('/data/export')}`,"
+    },
+    {
+      "evidence_id": "ev-cd6a70c4b3b7fa76",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:38",
+      "detail": "    const convRes = await apiClient.post(API.conversations(), { data: { title: uniqueTitle('注入测试') } });"
+    },
+    {
+      "evidence_id": "ev-e2503eec6178d6b4",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:44",
+      "detail": "    const msgRes = await apiClient.post(API.convMessages(convId), { data: { content: injectText } });"
+    },
+    {
+      "evidence_id": "ev-81ecddd91467d3d3",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:50",
+      "detail": "    await safeCleanup(`conversation:${convId}`, () => apiClient.delete(API.convById(convId)));"
+    },
+    {
+      "evidence_id": "ev-3c38d0f3bbd77875",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/core-exec4.spec.js",
+      "location": "line:60",
+      "detail": "    const res = await apiClient.get(API.export());"
+    },
+    {
+      "evidence_id": "ev-eca80b0e8aa1b11d",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:11",
+      "detail": "  requirements: (scope = 'personal') => `${env.baseURL}${env.api('/requirements')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-50ea12ed013deb61",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:12",
+      "detail": "  reqById: (id) => `${env.baseURL}${env.api(`/requirements/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-2830c4299a884c89",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:13",
+      "detail": "  action: (id, act) => `${env.baseURL}${env.api(`/requirements/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-63ed672950e5d236",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:14",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-54faf8cea9f786fe",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:33",
+      "detail": "    await apiClient.delete(API.reqById(id));"
+    },
+    {
+      "evidence_id": "ev-260b8573bc94338f",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:37",
+      "detail": "    const res = await apiClient.post(API.requirements(), {"
+    },
+    {
+      "evidence_id": "ev-7258d55b739865c0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:45",
+      "detail": "    const res = await apiClient.get(API.requirements('personal'));"
+    },
+    {
+      "evidence_id": "ev-e12d6ccfcd6fca1e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:52",
+      "detail": "    const res = await apiClient.get(API.requirements('team'));"
+    },
+    {
+      "evidence_id": "ev-eb71877de93dd1f2",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:60",
+      "detail": "    const res = await apiClient.get(API.reqById(id));"
+    },
+    {
+      "evidence_id": "ev-ecd4d0be9e2e4569",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:64",
+      "detail": "    await apiClient.delete(API.reqById(id));"
+    },
+    {
+      "evidence_id": "ev-9786145337e7bb89",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:68",
+      "detail": "    const res = await apiClient.get(API.reqById('not-exist-id'));"
+    },
+    {
+      "evidence_id": "ev-c8825102353b5cfb",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:75",
+      "detail": "    const res = await apiClient.post(API.action(id, 'submit'), {});"
+    },
+    {
+      "evidence_id": "ev-5b2797319eb61646",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:79",
+      "detail": "    await apiClient.delete(API.reqById(id));"
+    },
+    {
+      "evidence_id": "ev-6018c859eae39131",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/requirements.spec.js",
+      "location": "line:84",
+      "detail": "    const res = await apiClient.delete(API.reqById(id));"
+    },
+    {
+      "evidence_id": "ev-f9b31d96fba9825b",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:11",
+      "detail": "  projects: (scope = 'personal') => `${env.baseURL}${env.api('/sdd/projects')}?scope=${scope}`,"
+    },
+    {
+      "evidence_id": "ev-6176f4876e5f61e2",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:12",
+      "detail": "  projectById: (id) => `${env.baseURL}${env.api(`/sdd/projects/${id}`)}`,"
+    },
+    {
+      "evidence_id": "ev-8bd44a6e21bb341e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:13",
+      "detail": "  action: (id, act) => `${env.baseURL}${env.api(`/sdd/projects/${id}/${act}`)}`,"
+    },
+    {
+      "evidence_id": "ev-75857658376a722e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:28",
+      "detail": "    await apiClient.delete(API.projectById(id));"
+    },
+    {
+      "evidence_id": "ev-799fa4466e7a5566",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:32",
+      "detail": "    const res = await apiClient.get(API.projects('personal'));"
+    },
+    {
+      "evidence_id": "ev-b2bc9c6d520facaf",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:40",
+      "detail": "    const res = await apiClient.get(API.projectById(id));"
+    },
+    {
+      "evidence_id": "ev-f0e55fc53ad87ac6",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:44",
+      "detail": "    await apiClient.delete(API.projectById(id));"
+    },
+    {
+      "evidence_id": "ev-aa86325489202ce8",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:49",
+      "detail": "    const res = await apiClient.post(API.action(id, 'checklist/generate'), {});"
+    },
+    {
+      "evidence_id": "ev-c7eb320fed6ade57",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:52",
+      "detail": "    await apiClient.delete(API.projectById(id));"
+    },
+    {
+      "evidence_id": "ev-d44874585c2d84e0",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:57",
+      "detail": "    const res = await apiClient.post(API.action(id, 'archive'), {});"
+    },
+    {
+      "evidence_id": "ev-a45eeb7031f0f21e",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/sdd.spec.js",
+      "location": "line:64",
+      "detail": "    const res = await apiClient.delete(API.projectById(id));"
+    },
+    {
+      "evidence_id": "ev-6f19b18738c933c8",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:10",
+      "detail": "  adminModels: () => `${env.baseURL}${env.api('/admin/ai-models')}`,"
+    },
+    {
+      "evidence_id": "ev-2ad8039256d48bdd",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:11",
+      "detail": "  me: () => `${env.baseURL}${env.api('/data/me')}`,"
+    },
+    {
+      "evidence_id": "ev-0059bd23e9245c9c",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:12",
+      "detail": "  reqList: () => `${env.baseURL}${env.api('/requirements')}?scope=personal`,"
+    },
+    {
+      "evidence_id": "ev-985b79f620d964f3",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:27",
+      "detail": "    const res = await apiClient.get(API.adminModels());"
+    },
+    {
+      "evidence_id": "ev-64b68b725ceb1574",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:33",
+      "detail": "    const res = await anonClient.post(`${env.baseURL}${env.api('/auth/login')}`, {"
+    },
+    {
+      "evidence_id": "ev-e8655a7af5c51afd",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/api/security.spec.js",
+      "location": "line:42",
+      "detail": "    const res = await apiClient.post(`${env.baseURL}${env.api('/requirements')}?scope=personal`, {"
+    },
+    {
+      "evidence_id": "ev-6a884492fc0af129",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/unit/utils.spec.js",
+      "location": "line:20",
+      "detail": "    expect(env.api('/auth/login')).toBe('/api/v1/auth/login');"
+    },
+    {
+      "evidence_id": "ev-c937d29849cb39cb",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/unit/utils.spec.js",
+      "location": "line:21",
+      "detail": "    expect(env.api('/requirements')).toMatch(/^\\/api\\/v1\\//);"
+    },
+    {
+      "evidence_id": "ev-49b5acccd26dc7bc",
+      "kind": "source",
+      "path": "spec-kit-autotest/tests/unit/utils.spec.js",
+      "location": "line:111",
+      "detail": "        expect(url).toBe(`${env.baseURL}${env.api('/auth/login')}`);"
+    },
+    {
+      "evidence_id": "ev-b46d9f8af6ad7670",
+      "kind": "source",
+      "path": "spec-kit-autotest/utils/auth.js",
+      "location": "line:17",
+      "detail": "  const res = await client.post(`${env.baseURL}${env.api('/auth/login')}`, {"
+    }
+  ],
+  "conflicts": [],
+  "summary": {
+    "endpoints": 6,
+    "observed_flows": 0,
+    "source_rules": 11,
+    "tests": 15,
+    "unreadable": 0
+  }
+}

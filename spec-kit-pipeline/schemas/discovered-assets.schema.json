@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "scan_run_id", "target", "assets", "evidence", "conflicts"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "scan_run_id": {"type": "string", "minLength": 1},
+    "target": {"type": "object", "required": ["name", "environment", "version"], "properties": {"name": {"type": "string"}, "environment": {"enum": ["production-like", "isolated", "local"]}, "version": {"type": "string"}}, "additionalProperties": false},
+    "assets": {"type": "object", "required": ["endpoints", "observed_flows", "source_rules", "tests", "unreadable"], "additionalProperties": true},
+    "evidence": {"type": "array", "items": {"type": "object", "required": ["evidence_id", "kind", "path", "location"], "properties": {"evidence_id": {"type": "string"}, "kind": {"enum": ["contract", "har", "source", "dom", "manual"]}, "path": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).*"}, "location": {"type": "string"}}, "additionalProperties": true}},
+    "conflicts": {"type": "array"}
+  },
+  "additionalProperties": false
+}

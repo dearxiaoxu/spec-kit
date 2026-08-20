@@ -1,0 +1,1006 @@
+{
+  "schema_version": "1.0",
+  "input_digest": "3eb49b8e753c2ede40c791542993b29df12495ef984efd8eb2b69c63af07ffbd",
+  "candidates": [
+    {
+      "candidate_id": "case-092997d04a58b9b5",
+      "title": "GET /auth/session - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/session' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-6066b704592cb178"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "670076c0c9027793e3a55ced6801a9ebd594be9c2c18659834075374b202ae22"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-5249ab65fb148018",
+      "title": "GET /auth/session - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/session' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-6066b704592cb178"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "670076c0c9027793e3a55ced6801a9ebd594be9c2c18659834075374b202ae22"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-5dafc9e8ce95a39b",
+      "title": "GET /quality-gates - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/quality-gates' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-aeaf63539eabc42d"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "af83f5e10b6609cf50f338aef2095bb1fc4792d451f2381c05e15776d67edcba"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-69fd9ecc32cb9079",
+      "title": "GET /quality-gates - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/quality-gates' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-aeaf63539eabc42d"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "af83f5e10b6609cf50f338aef2095bb1fc4792d451f2381c05e15776d67edcba"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-782734cd5b8ee7a1",
+      "title": "GET /requirements - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/requirements' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-8c7d90d6afb1431a"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "a1250ac91b3c182aed661cfcfb9e2f8f10df9dc7c9ca5ab10467a1c050f4accb"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-a78614f358a0ef50",
+      "title": "GET /jobs - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/jobs' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-9addfda6eee469b3"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "cf9f5026bc05e3b54f4df530d5099e38de32d6606a58b2d87b78dec1f3ae969e"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-a78674fb8a051ebc",
+      "title": "GET /sdd/projects - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/sdd/projects' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-2d5a3f43a22be600"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "a79ecce7ed3e1e03a5c09bdd8a2c726db12ad6f97ecc7f0f3c97bf0cc841e5c5"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-b270af6c9f9045b1",
+      "title": "GET /jobs - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/jobs' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-9addfda6eee469b3"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "cf9f5026bc05e3b54f4df530d5099e38de32d6606a58b2d87b78dec1f3ae969e"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-b634315b5eb413e9",
+      "title": "GET /requirements - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/requirements' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-8c7d90d6afb1431a"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "a1250ac91b3c182aed661cfcfb9e2f8f10df9dc7c9ca5ab10467a1c050f4accb"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-b8aba3871053aba9",
+      "title": "GET /auth/login - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/login' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-a9fd77c8d51d65ea"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "已有测试覆盖，默认不重复生成",
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [
+          "spec-kit-autotest/tests/unit/utils.spec.js"
+        ],
+        "coverage_status": "covered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "41a3eabe477a5ea135c5468898611e8fc11e76f19c259af265b7bc86b6014c2d"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-bc68765704d8ad6e",
+      "title": "GET /sdd/projects - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/sdd/projects' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-2d5a3f43a22be600"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "a79ecce7ed3e1e03a5c09bdd8a2c726db12ad6f97ecc7f0f3c97bf0cc841e5c5"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-bde01c25915aefc6",
+      "title": "GET /jobs - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/jobs' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-9addfda6eee469b3"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "cf9f5026bc05e3b54f4df530d5099e38de32d6606a58b2d87b78dec1f3ae969e"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-c7a8549bfd175221",
+      "title": "GET /sdd/projects - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/sdd/projects' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-2d5a3f43a22be600"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "a79ecce7ed3e1e03a5c09bdd8a2c726db12ad6f97ecc7f0f3c97bf0cc841e5c5"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-c9b340ce3f9378c7",
+      "title": "GET /auth/login - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/login' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-a9fd77c8d51d65ea"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "已有测试覆盖，默认不重复生成",
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [
+          "spec-kit-autotest/tests/unit/utils.spec.js"
+        ],
+        "coverage_status": "covered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "41a3eabe477a5ea135c5468898611e8fc11e76f19c259af265b7bc86b6014c2d"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-dd47a874c57157e9",
+      "title": "GET /requirements - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/requirements' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-8c7d90d6afb1431a"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "a1250ac91b3c182aed661cfcfb9e2f8f10df9dc7c9ca5ab10467a1c050f4accb"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-ddb9838ceecdfcc4",
+      "title": "GET /auth/login - 请求可达性",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/login' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-a9fd77c8d51d65ea"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "已有测试覆盖，默认不重复生成",
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [
+          "spec-kit-autotest/tests/unit/utils.spec.js"
+        ],
+        "coverage_status": "covered"
+      },
+      "generator": {
+        "rule_id": "deterministic.reachable",
+        "rule_version": "1",
+        "input_digest": "41a3eabe477a5ea135c5468898611e8fc11e76f19c259af265b7bc86b6014c2d"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-f3b6ad7863c0579f",
+      "title": "GET /auth/session - 响应结构",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/auth/session' )",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "shape",
+          "expression": "response has documented JSON shape",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-6066b704592cb178"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.shape",
+        "rule_version": "1",
+        "input_digest": "670076c0c9027793e3a55ced6801a9ebd594be9c2c18659834075374b202ae22"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    },
+    {
+      "candidate_id": "case-faf13d825519bff1",
+      "title": "GET /quality-gates - 未认证访问",
+      "module": "unknown",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": [
+        "production-like",
+        "isolated"
+      ],
+      "preconditions": [
+        "fixture-managed authentication"
+      ],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/quality-gates' )",
+          "client": "anonClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "expression": "documented unauthenticated status",
+          "strength": "candidate",
+          "human_review_required": true
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": [
+        "ev-aeaf63539eabc42d"
+      ],
+      "confidence": "medium",
+      "human_confirmations": [
+        "confirm status codes and business assertions"
+      ],
+      "lifecycle_status": "DRAFT",
+      "automatable": false,
+      "coverage": {
+        "existing_test_refs": [],
+        "coverage_status": "uncovered"
+      },
+      "generator": {
+        "rule_id": "deterministic.unauthenticated",
+        "rule_version": "1",
+        "input_digest": "af83f5e10b6609cf50f338aef2095bb1fc4792d451f2381c05e15776d67edcba"
+      },
+      "review": {
+        "reviewer": null,
+        "reviewed_at": null,
+        "decision": null,
+        "notes": null
+      }
+    }
+  ],
+  "summary": {
+    "total": 18,
+    "by_status": {
+      "AUTOMATABLE": 5,
+      "DRAFT": 13
+    }
+  }
+}

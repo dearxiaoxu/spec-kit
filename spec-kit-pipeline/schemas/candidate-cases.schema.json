@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "input_digest", "candidates"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "input_digest": {"type": "string", "minLength": 1},
+    "candidates": {"type": "array", "items": {"type": "object", "required": ["candidate_id", "title", "test_type", "risk", "lifecycle_status", "evidence_refs"], "properties": {"candidate_id": {"type": "string"}, "title": {"type": "string", "minLength": 1}, "test_type": {"enum": ["api", "ui"]}, "risk": {"enum": ["readonly", "stateful", "destructive", "unknown"]}, "lifecycle_status": {"enum": ["DRAFT", "AUTOMATABLE", "BLOCKED", "VALIDATED", "REJECTED", "STALE"]}, "evidence_refs": {"type": "array", "minItems": 1}, "allowed_environments": {"type": "array"}, "review": {"type": "object"}}, "additionalProperties": true}}
+  },
+  "additionalProperties": false
+}

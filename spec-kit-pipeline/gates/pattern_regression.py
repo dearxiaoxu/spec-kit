@@ -58,6 +58,7 @@ class PatternRegressionGate(Gate):
         except Exception as e:
             return {"ok": False, "detail": f"请求失败: {e}"}
 
+
         if expect is None:
             return {"ok": True, "detail": f"HTTP {status}"}
         problems = []
