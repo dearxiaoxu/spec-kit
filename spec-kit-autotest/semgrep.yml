@@ -9,8 +9,13 @@ rules:
     message: 禁止在日志中输出凭据
     severity: ERROR
     languages: [javascript]
-    pattern-either:
-      - pattern: console.log(..., $PASSWORD, ...)
-      - pattern: console.log(..., $TOKEN, ...)
-      - pattern: console.warn(..., $PASSWORD, ...)
-      - pattern: console.warn(..., $TOKEN, ...)
+    patterns:
+      - pattern-either:
+          - pattern: console.$METHOD(..., $CREDENTIAL, ...)
+          - pattern: console.$METHOD(`...${$CREDENTIAL}...`)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(log|warn|error|info|debug)$
+      - metavariable-regex:
+          metavariable: $CREDENTIAL
+          regex: (?i).*(password|token|secret|authorization|cookie|username).*

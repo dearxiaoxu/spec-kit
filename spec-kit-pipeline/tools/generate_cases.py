@@ -27,22 +27,24 @@ def make_case(endpoint, scenario, assets):
     assertions = []
     for response in endpoint.get("responses", []):
         if str(response).startswith("2") and scenario["id"] == "reachable":
-            assertions.append({"kind": "status", "expression": f"status is one of documented success responses ({response})", "strength": "candidate", "human_review_required": True})
+            assertions.append({"kind": "status", "matcher": "equals", "expected": int(response) if str(response).isdigit() else response, "evidence_refs": refs, "human_review_required": True})
             break
-    if scenario["id"] == "shape": assertions.append({"kind": "shape", "expression": "response has documented JSON shape", "strength": "candidate", "human_review_required": True})
+    if scenario["id"] == "shape": assertions.append({"kind": "shape", "matcher": "documented_schema", "expected": endpoint.get("request_schema") or {}, "evidence_refs": refs, "human_review_required": True})
     if scenario["id"] == "unauthenticated":
-        assertions.append({"kind": "status", "expression": "documented unauthenticated status", "strength": "candidate", "human_review_required": True})
-    status = "BLOCKED" if blocked else ("DRAFT" if any(x.get("human_review_required") for x in assertions) else "AUTOMATABLE")
-    if existing: status = "DRAFT"; blocked.append("已有测试覆盖，默认不重复生成")
+        assertions.append({"kind": "status", "matcher": "one_of", "expected": [401, 403], "evidence_refs": refs, "human_review_required": True})
+    if not assertions:
+        assertions.append({"kind": "business", "matcher": "human_confirmation", "expected": scenario["title"], "evidence_refs": refs, "human_review_required": True})
+    status = "BLOCKED" if blocked else "CANDIDATE"
+    if existing: status = "BLOCKED"; blocked.append("已有测试覆盖，默认不重复生成")
     return {
-        "candidate_id": case_id, "title": title, "module": path.strip("/").split("/")[2] if path.startswith("/api/") and len(path.split("/")) > 2 else "unknown",
+        "case_id": case_id, "title": title, "module": path.strip("/").split("/")[2] if path.startswith("/api/") and len(path.split("/")) > 2 else "unknown",
         "test_type": "api", "priority": "P1" if risk != "readonly" else "P2", "risk": risk,
         "allowed_environments": allowed_env(risk), "preconditions": ["fixture-managed authentication"],
         "test_data": [], "steps": [{"action": "request", "method": method, "path_expression": path_expression(path), "client": scenario.get("client", "apiClient")}],
         "expected_results": assertions, "cleanup": (["resourceTracker or approved cleanup"] if risk == "stateful" else []),
         "evidence_refs": refs, "confidence": endpoint.get("confidence", "low"), "human_confirmations": blocked + ["confirm status codes and business assertions"],
-        "lifecycle_status": status, "automatable": status == "AUTOMATABLE", "coverage": {"existing_test_refs": existing, "coverage_status": "covered" if existing else "uncovered"},
-        "generator": {"rule_id": f"deterministic.{scenario['id']}", "rule_version": "1", "input_digest": digest(endpoint)},
+        "lifecycle_status": status, "automatable": False, "coverage": {"existing_test_refs": existing, "coverage_status": "covered" if existing else "uncovered"},
+        "generation_metadata": {"generator_version": "2.0", "template_version": "2.0", "rule_id": f"deterministic.{scenario['id']}", "input_digest": digest(endpoint), "model_provider": None, "model": None, "prompt_version": None},
         "review": {"reviewer": None, "reviewed_at": None, "decision": None, "notes": None},
     }
 
@@ -61,17 +63,17 @@ def generate(doc, only_uncovered=False, max_cases=None):
         if endpoint.get("auth", {}).get("required"):
             scenarios.append({"id":"unauthenticated", "title":"未认证访问", "client":"anonClient"})
         for scenario in scenarios: cases.append(make_case(endpoint, scenario, assets))
-    cases = {case["candidate_id"]: case for case in cases}
+    cases = {case["case_id"]: case for case in cases}
     ordered = [cases[key] for key in sorted(cases)]
     return ordered[:max_cases] if max_cases else ordered
 
 def markdown(doc):
     lines=["# Candidate Test Cases", "", f"- Input digest: `{doc['input_digest']}`", f"- Candidates: `{len(doc['candidates'])}`", "", "> These are candidates only. They are not approved for production or direct execution.", ""]
     for case in doc["candidates"]:
-        lines += [f"## {case['candidate_id']} - {case['title']}", f"- status: `{case['lifecycle_status']}`; risk: `{case['risk']}`; type: `{case['test_type']}`", f"- environments: `{', '.join(case['allowed_environments'])}`", f"- evidence: `{', '.join(case['evidence_refs']) or 'none'}`", f"- human confirmation: {'; '.join(case['human_confirmations'])}", "", "### Steps", ""]
+        lines += [f"## {case['case_id']} - {case['title']}", f"- status: `{case['lifecycle_status']}`; risk: `{case['risk']}`; type: `{case['test_type']}`", f"- environments: `{', '.join(case['allowed_environments'])}`", f"- evidence: `{', '.join(case['evidence_refs']) or 'none'}`", f"- human confirmation: {'; '.join(case['human_confirmations'])}", "", "### Steps", ""]
         for step in case["steps"]: lines.append(f"1. `{step['client']}` {step['method']} `{step['path_expression']}`")
         lines += ["", "### Expected", ""]
-        for item in case["expected_results"]: lines.append(f"- {item['expression']}")
+        for item in case["expected_results"]: lines.append(f"- {item['kind']} {item['matcher']}: {item['expected']}")
         lines.append("")
     return "\n".join(lines)
 

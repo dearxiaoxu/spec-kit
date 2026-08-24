@@ -10,17 +10,19 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from tools.common import (InputError, ToolError, assert_isolated_output, digest,
+from tools.common import (InputError, ToolError, assert_isolated_output, assert_within, digest,
                           file_digest, redact, relative_posix, validate_asset_doc,
-                          write_json, atomic_write)
+                          write_json, atomic_write, utc_now)
 
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options"}
 SKIP_DIRS = {".git", "node_modules", ".tools", "reports", "report", "test-results", "__pycache__"}
 SKIP_FILES = {".env", ".env.local", ".auth", "storageState.json"}
 
 
-def evidence(kind, path, location, detail=None):
-    item = {"evidence_id": f"ev-{digest([kind, path, location])[:16]}", "kind": kind, "path": path, "location": location}
+def evidence(kind, path, location, detail=None, *, content_hash="", target_version="unknown"):
+    item = {"evidence_id": f"ev-{digest([kind, path, location, content_hash])[:16]}", "kind": kind, "path": path, "location": location,
+            "content_hash": f"sha256:{content_hash or digest(detail or location)}", "collected_at": utc_now(),
+            "redaction_status": "redacted" if detail is not None else "not_required", "target_version": target_version}
     if detail is not None:
         item["detail"] = redact(detail)
     return item
@@ -45,7 +47,7 @@ def schema_summary(schema):
     return result
 
 
-def parse_contract(path: Path, root: Path, assets, evidence_list, conflicts):
+def parse_contract(path: Path, root: Path, assets, evidence_list, conflicts, target_version="unknown"):
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -69,15 +71,19 @@ def parse_contract(path: Path, root: Path, assets, evidence_list, conflicts):
                     "request_schema": schema, "parameters": parameters, "responses": responses,
                     "side_effect": classify(method.upper(), route), "evidence_refs": [], "confidence": "high",
                 }
-                ev = evidence("contract", rel, f"/paths/{route}/{method}")
+                ev = evidence("contract", rel, f"/paths/{route}/{method}", content_hash=file_digest(path), target_version=target_version)
                 item["evidence_refs"].append(ev["evidence_id"]); evidence_list.append(ev)
                 assets["endpoints"].append(item)
         return
     for contract in data.get("contracts") or []:
-        route = contract.get("path") or contract.get("endpoint")
+        endpoint_text = str(contract.get("endpoint") or "")
+        endpoint_match = re.match(r"^\s*(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(.+)$", endpoint_text, re.I)
+        route = contract.get("path") or (endpoint_match.group(2) if endpoint_match else endpoint_text)
         if not route: continue
-        method = str(contract.get("method", "GET")).upper()
-        ev = evidence("contract", rel, f"/contracts/{len(assets['endpoints'])}")
+        match = re.match(r"^\s*(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(.+)$", str(route), re.I)
+        method = str(contract.get("method") or (endpoint_match.group(1) if endpoint_match else None) or (match.group(1) if match else "GET")).upper()
+        route = (match.group(2) if match else str(route)).strip()
+        ev = evidence("contract", rel, f"/contracts/{len(assets['endpoints'])}", content_hash=file_digest(path), target_version=target_version)
         evidence_list.append(ev)
         assets["endpoints"].append({
             "asset_id": f"endpoint:{method}:{route}", "method": method, "path": route,
@@ -95,7 +101,7 @@ def response_shape(value, depth=0):
     return type(value).__name__
 
 
-def parse_har(path: Path, root: Path, assets, evidence_list):
+def parse_har(path: Path, root: Path, assets, evidence_list, target_version="unknown"):
     try: data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         assets["unreadable"].append({"path": relative_posix(path, root), "reason": str(exc)})
@@ -105,8 +111,8 @@ def parse_har(path: Path, root: Path, assets, evidence_list):
     for index, entry in enumerate(entries):
         request = entry.get("request") or {}; response = entry.get("response") or {}
         parsed = urlsplit(request.get("url", "")); route = parsed.path or "/"
-        query = sorted((key, "[REDACTED]") if re.search(r"token|secret|password|key", key, re.I) else (key, value) for key, value in parse_qsl(parsed.query))
-        ev = evidence("har", rel, f"/log/entries/{index}")
+        query = sorted([key, "[REDACTED]"] for key, _value in parse_qsl(parsed.query, keep_blank_values=True))
+        ev = evidence("har", rel, f"/log/entries/{index}", content_hash=file_digest(path), target_version=target_version)
         evidence_list.append(ev)
         body = ((response.get("content") or {}).get("text") or "")
         shape = None
@@ -122,7 +128,7 @@ def parse_har(path: Path, root: Path, assets, evidence_list):
         })
 
 
-def scan_source(path: Path, root: Path, assets, evidence_list):
+def scan_source(path: Path, root: Path, assets, evidence_list, target_version="unknown"):
     if path.name in SKIP_FILES or path.suffix not in {".js", ".ts", ".py", ".json", ".yaml", ".yml"}: return
     try: text = path.read_text(encoding="utf-8", errors="replace")
     except OSError: return
@@ -130,7 +136,7 @@ def scan_source(path: Path, root: Path, assets, evidence_list):
     refs = []
     for line_no, line in enumerate(text.splitlines(), 1):
         if "env.api(" in line or re.search(r"apiClient\.(get|post|put|patch|delete)", line):
-            ev = evidence("source", rel, f"line:{line_no}", line[:240]); evidence_list.append(ev); refs.append(ev["evidence_id"])
+            ev = evidence("source", rel, f"line:{line_no}", line[:240], content_hash=sha, target_version=target_version); evidence_list.append(ev); refs.append(ev["evidence_id"])
     if refs:
         assets["source_rules"].append({"asset_id": f"source:{rel}", "path": rel, "sha256": sha, "evidence_refs": refs, "kind": "source"})
     if path.name.endswith(".spec.js"):
@@ -148,18 +154,23 @@ def build(args):
     if not contracts:
         default = pipeline_root / "assets/contract/current.json"
         if default.exists(): contracts = [default]
-    for path in contracts: parse_contract(path, root, assets, evidence_list, conflicts)
-    for path in map(Path, args.har): parse_har(path.resolve(), root, assets, evidence_list)
+    for path in contracts:
+        assert_within(path, root, "契约输入")
+        parse_contract(path, root, assets, evidence_list, conflicts, args.version)
+    for path in map(Path, args.har):
+        path = path.resolve(); assert_within(path, root, "HAR 输入"); parse_har(path, root, assets, evidence_list, args.version)
     source_paths = [Path(p).resolve() for p in args.source_dir]
     source_paths += [autotest_root / "tests", autotest_root / "utils", autotest_root / "config"] if not source_paths else []
     for source in source_paths:
-        if source.is_file(): scan_source(source, root, assets, evidence_list)
+        if not (source == root or source.is_relative_to(root) or source == autotest_root or source.is_relative_to(autotest_root)):
+            raise InputError(f"源码输入越界: {source}")
+        if source.is_file(): scan_source(source, root, assets, evidence_list, args.version)
         elif source.is_dir():
             for path in sorted(source.rglob("*")):
-                if path.is_file() and not any(part in SKIP_DIRS for part in path.parts): scan_source(path, root, assets, evidence_list)
+                if path.is_file() and not any(part in SKIP_DIRS for part in path.parts): scan_source(path, root, assets, evidence_list, args.version)
     for endpoint in assets["endpoints"]:
         endpoint["existing_test_refs"] = [test["path"] for test in assets["tests"] if endpoint["path"] in " ".join(test.get("covered_paths", []))]
-    doc = {"schema_version": "1.0", "scan_run_id": args.run_id, "target": {"name": "spec-kit", "environment": args.environment, "version": args.version}, "assets": assets, "evidence": evidence_list, "conflicts": conflicts, "summary": {k: len(v) for k,v in assets.items()}}
+    doc = {"schema_version": "1.0", "scan_run_id": args.run_id, "created_at": utc_now(), "authorization_scope": {"root": str(root), "mode": "offline-read-only"}, "scanner_versions": {"discover": "2.0"}, "target": {"name": "spec-kit", "environment": args.environment, "version": args.version}, "assets": assets, "evidence": evidence_list, "conflicts": conflicts, "summary": {k: len(v) for k,v in assets.items()}}
     return doc, output
 
 

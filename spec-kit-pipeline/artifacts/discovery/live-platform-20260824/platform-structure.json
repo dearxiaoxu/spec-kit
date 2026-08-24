@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "scan_run_id": "live-ui-readonly-20260824",
+  "collected_at": "2026-08-24T10:30:00+08:00",
+  "target": {
+    "name": "Spec-Kit",
+    "base_url": "https://106.54.60.191",
+    "environment": "production-like",
+    "version": "2.5.0"
+  },
+  "authorization": {
+    "role": "administrator",
+    "mode": "browser-read-only",
+    "credentials_persisted": false
+  },
+  "spaces": {
+    "personal": {
+      "requirements": 3,
+      "task_projects": 0,
+      "sdd_projects": 4,
+      "documents": 1,
+      "inbox_items": 12,
+      "recent_jobs": 0
+    },
+    "team": {
+      "teams": 0,
+      "members": 0,
+      "requirements": 0,
+      "projects": 0,
+      "documents": 0
+    }
+  },
+  "modules": [
+    {"id": "inbox", "route": "/inbox", "capabilities": ["filter-by-date", "filter-by-priority", "create-item"]},
+    {"id": "requirement-assistant", "route": "/requirement-assistant", "capabilities": ["conversation", "model-selection", "normalize", "draft", "transfer-to-sdd", "openspec"]},
+    {"id": "dashboard", "route": "/dashboard", "capabilities": ["personal-summary", "recent-jobs", "quick-navigation"]},
+    {"id": "requirements", "route": "/requirements", "capabilities": ["status-filter", "create", "review", "transfer-to-sdd"]},
+    {"id": "task-projects", "route": "/projects", "capabilities": ["project-management", "template-management"]},
+    {"id": "sdd", "route": "/sdd", "capabilities": ["direct-create", "create-from-requirement", "stage-progress", "prompt-entry"]},
+    {"id": "documents", "route": "/docs", "capabilities": ["project", "personal", "team", "specification", "tutorial", "archive", "upload"]},
+    {"id": "team-board", "route": "/team-board", "capabilities": ["team-switch", "team-create", "member-view", "weekly-report", "mail-settings"]},
+    {"id": "history", "route": "/history", "capabilities": ["json-import", "full-export", "incremental-export", "job-history"]},
+    {"id": "tutorial", "route": "/tutorial", "capabilities": ["ten-step-guidance", "progress-reset"]},
+    {"id": "admin-users", "route": "/admin?tab=users", "capabilities": ["role-management", "password-reset"]},
+    {"id": "admin-ai", "route": "/admin?tab=ai", "capabilities": ["provider-management", "key-pool-status", "connection-test", "default-chat", "default-judge"]},
+    {"id": "admin-sdd-prompts", "route": "/admin?tab=sdd-prompts", "capabilities": ["template-filter", "template-create", "preset-import", "preset-export"]},
+    {"id": "admin-cosmic", "route": "/admin?tab=cosmic", "capabilities": ["rules", "prompt", "estimation-model", "project-context"]}
+  ],
+  "observations": [
+    {"severity": "high", "id": "AUTH-WEAK-ADMIN", "summary": "授权登录使用了弱口令模式的管理员凭据；未在产物中保存凭据值。"},
+    {"severity": "high", "id": "CONTRACT-COVERAGE-GAP", "summary": "现网 UI 暴露 14 个模块面，当前人工契约仅登记 6 个 API，契约覆盖明显不足。"},
+    {"severity": "medium", "id": "TEST-DATA-RESIDUE", "summary": "个人空间仍存在 2 个以缺陷复现命名的 SDD 项目，表明测试数据清理未闭环。"},
+    {"severity": "medium", "id": "ADMIN-HIGH-RISK-ACTIONS", "summary": "管理工作台提供角色切换、密码重置、模型删除及密钥池管理，高风险动作需独立审计与二次确认。"},
+    {"severity": "medium", "id": "AI-GOVERNANCE-PARTIAL", "summary": "已配置多个模型和默认 Chat/Judge，但个人 SDD Prompt 模板、COSMIC 规则、Prompt 和估算模型均为空。"},
+    {"severity": "medium", "id": "TEAM-FLOW-UNVERIFIED", "summary": "团队空间无团队及成员数据，团队隔离、成员权限和周报流程无法从现有数据验证。"},
+    {"severity": "low", "id": "EMPTY-TASK-PROJECTS", "summary": "个人任务项目和模板均为 0，任务项目主流程缺少现网样本。"}
+  ],
+  "not_executed": [
+    "create",
+    "update",
+    "approve",
+    "archive",
+    "delete",
+    "password-reset",
+    "role-change",
+    "connection-test",
+    "ai-generation",
+    "import",
+    "export"
+  ],
+  "redaction": {
+    "credentials": "omitted",
+    "user_rows": "aggregated",
+    "conversation_content": "omitted",
+    "model_keys": "omitted"
+  }
+}

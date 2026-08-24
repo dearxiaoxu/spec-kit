@@ -11,9 +11,44 @@
 from __future__ import annotations
 
 import os
+import json
+import re
 import subprocess
 
 from .base import Gate, GateResult, GateSetupError
+
+
+DETECTED_MUTANT_STATUSES = {"Killed", "Timeout"}
+
+
+def mutation_rate_from_report(path: str) -> float | None:
+    if not os.path.isfile(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            report = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise GateSetupError(f"Stryker JSON 报告不可读: {path}: {exc}") from exc
+    mutants = [
+        mutant
+        for file_result in (report.get("files") or {}).values()
+        for mutant in (file_result.get("mutants") or [])
+    ]
+    if not mutants:
+        raise GateSetupError(f"Stryker JSON 报告不含 mutants: {path}")
+    detected = sum(mutant.get("status") in DETECTED_MUTANT_STATUSES for mutant in mutants)
+    return detected / len(mutants)
+
+
+def mutation_rate_from_output(output: str) -> float | None:
+    for pattern in (
+        r"Final mutation score\s+([\d.]+)",
+        r"([\d.]+)\s*%\s*(?:killed|mutation score|覆盖)",
+    ):
+        match = re.search(pattern, output, re.IGNORECASE)
+        if match:
+            return float(match.group(1)) / 100.0
+    return None
 
 
 class MutationCheckGate(Gate):
@@ -24,6 +59,7 @@ class MutationCheckGate(Gate):
         self.mutation_cmd = cfg.get("mutation_cmd")
         self.min_kill_rate = float(cfg.get("min_kill_rate", 0.7))
         self.cwd = self.config.get("autotest_dir", self.config.get("project_root", "."))
+        self.report_path = os.path.join(self.cwd, cfg.get("report_file", "reports/mutation/mutation.json"))
 
     def run(self) -> GateResult:
         if not self.mutation_cmd:
@@ -38,22 +74,25 @@ class MutationCheckGate(Gate):
             )
 
         try:
+            if os.path.exists(self.report_path):
+                os.remove(self.report_path)
             proc = subprocess.run(self.mutation_cmd, cwd=self.cwd, capture_output=True, text=True, timeout=3600)
         except Exception as e:
             raise GateSetupError(f"变异测试执行失败: {e}")
 
         out = (proc.stdout or "") + (proc.stderr or "")
-        # 尝试从输出提取 kill rate（Stryker 格式 "xx.xx% killed"）
-        import re
-        m = re.search(r"([\d.]+)\s*%\s*(?:killed|mutation score|覆盖)", out, re.IGNORECASE)
-        rate = float(m.group(1)) / 100.0 if m else None
-        passed = (rate is None and proc.returncode == 0) or (rate is not None and rate >= self.min_kill_rate)
+        rate = mutation_rate_from_report(self.report_path)
+        if rate is None:
+            rate = mutation_rate_from_output(out)
+        if rate is None:
+            raise GateSetupError("变异测试完成但未获得可解析的 mutation score")
+        passed = proc.returncode == 0 and rate >= self.min_kill_rate
 
         return GateResult(
             name=self.name,
             passed=passed,
             blocking=self.blocking,
-            detail=f"变异测试 kill rate {rate:.1%}" if rate else f"变异测试退出码 {proc.returncode}（未解析 kill rate）",
+            detail=f"变异测试 kill rate {rate:.1%}（退出码 {proc.returncode}）",
             issues=[] if passed else [out[-1500:]],
             metrics={"kill_rate": rate, "min_kill_rate": self.min_kill_rate},
         )

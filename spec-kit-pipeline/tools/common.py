@@ -6,6 +6,7 @@ import json
 import os
 import re
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -14,6 +15,8 @@ SENSITIVE_TEXT = re.compile(
     r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]+|((?:password|token|secret|api[_-]?key)\s*[:=]\s*)[^\s,}\]]+"
 )
 PROTECTED_NAMES = {".env", ".env.local", ".auth", "storageState.json", "test-results.json"}
+SAFE_STATUS_KEYS = {"secret_scan"}
+LIFECYCLE = {"DISCOVERED", "CANDIDATE", "IN_REVIEW", "REVIEWED", "AUTOMATABLE", "GENERATED", "VALIDATED", "EXECUTED", "REJECTED", "BLOCKED", "STALE"}
 
 class ToolError(Exception):
     """Expected user/configuration or policy error."""
@@ -42,9 +45,13 @@ def file_digest(path: Path) -> str:
     return h.hexdigest()
 
 
+def utc_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
 def redact(value: Any) -> Any:
     if isinstance(value, dict):
-        return {key: "[REDACTED]" if SENSITIVE_KEY.search(str(key)) else redact(item) for key, item in value.items()}
+        return {key: "[REDACTED]" if str(key) not in SAFE_STATUS_KEYS and SENSITIVE_KEY.search(str(key)) else redact(item) for key, item in value.items()}
     if isinstance(value, list):
         return [redact(item) for item in value]
     if isinstance(value, str):
@@ -115,6 +122,16 @@ def validate_asset_doc(doc: dict) -> list[str]:
     if doc.get("schema_version") != "1.0": errors.append("schema_version 必须为 1.0")
     if not isinstance(doc.get("assets"), dict): errors.append("assets 必须为对象")
     if not isinstance(doc.get("evidence"), list): errors.append("evidence 必须为数组")
+    evidence_ids = set()
+    for i, item in enumerate(doc.get("evidence", [])):
+        for key in ("evidence_id", "kind", "path", "location", "content_hash", "collected_at", "redaction_status", "target_version"):
+            if not item.get(key): errors.append(f"evidence[{i}] 缺少 {key}")
+        evidence_ids.add(item.get("evidence_id"))
+    for group in (doc.get("assets") or {}).values():
+        if not isinstance(group, list): continue
+        for item in group:
+            for ref in item.get("evidence_refs", []):
+                if ref not in evidence_ids: errors.append(f"资产引用未知证据: {ref}")
     return errors
 
 
@@ -123,10 +140,32 @@ def validate_candidate_doc(doc: dict) -> list[str]:
     if doc.get("schema_version") != "1.0": errors.append("schema_version 必须为 1.0")
     if not isinstance(doc.get("candidates"), list): errors.append("candidates 必须为数组")
     for i, case in enumerate(doc.get("candidates", [])):
-        for key in ("candidate_id", "title", "lifecycle_status", "evidence_refs"):
+        for key in ("case_id", "title", "lifecycle_status", "evidence_refs"):
             if not case.get(key): errors.append(f"candidates[{i}] 缺少 {key}")
-        if case.get("lifecycle_status") == "VALIDATED" and case.get("review", {}).get("decision") != "approve":
-            errors.append(f"candidates[{i}] VALIDATED 必须 review.decision=approve")
+        if case.get("lifecycle_status") not in LIFECYCLE: errors.append(f"candidates[{i}] 生命周期非法")
+        if not case.get("steps"): errors.append(f"candidates[{i}] steps 不能为空")
+        if not case.get("expected_results"): errors.append(f"candidates[{i}] expected_results 不能为空")
+        if case.get("lifecycle_status") in {"AUTOMATABLE", "GENERATED", "VALIDATED", "EXECUTED"}:
+            if case.get("review", {}).get("decision") != "approve": errors.append(f"candidates[{i}] 自动化状态必须 review.decision=approve")
+            if case.get("automatable") is not True: errors.append(f"candidates[{i}] 自动化状态必须 automatable=true")
+            if any(x.get("human_review_required") for x in case.get("expected_results", [])): errors.append(f"candidates[{i}] 仍有待确认断言")
         if case.get("risk") == "destructive" and "production-like" in case.get("allowed_environments", []):
             errors.append(f"candidates[{i}] destructive 不得允许 production-like")
+        if case.get("risk") in {"stateful", "destructive"} and not case.get("cleanup"):
+            errors.append(f"candidates[{i}] 写操作必须声明 cleanup")
+    return errors
+
+
+def validate_generation_manifest(doc: dict) -> list[str]:
+    errors = []
+    if doc.get("schema_version") != "1.0": errors.append("schema_version 必须为 1.0")
+    if doc.get("lifecycle_status") != "GENERATED": errors.append("生成清单状态必须为 GENERATED")
+    if doc.get("write_mode") != "isolated-only": errors.append("write_mode 必须为 isolated-only")
+    if not isinstance(doc.get("case_ids"), list) or not isinstance(doc.get("files"), list): errors.append("case_ids/files 必须为数组")
+    if any(Path(path).is_absolute() or ".." in Path(path).parts for path in doc.get("files", [])): errors.append("files 包含越界路径")
+    validation = doc.get("validation") or {}
+    for key in ("schema", "path_boundary", "secret_scan"):
+        if validation.get(key) != "PASS": errors.append(f"validation.{key} 必须为 PASS")
+    for key in ("lint", "playwright_discovery", "execution"):
+        if validation.get(key) not in {"PASS", "FAIL", "NOT_RUN"}: errors.append(f"validation.{key} 状态非法")
     return errors

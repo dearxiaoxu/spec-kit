@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "input_digest": "offline-reviewed-fixture",
+  "candidates": [
+    {
+      "case_id": "case-reviewed-health",
+      "title": "GET /api/v1/auth/session returns reviewed status",
+      "module": "auth",
+      "test_type": "api",
+      "priority": "P2",
+      "risk": "readonly",
+      "allowed_environments": ["isolated"],
+      "preconditions": ["fixture-managed authentication"],
+      "test_data": [],
+      "steps": [
+        {
+          "action": "request",
+          "method": "GET",
+          "path_expression": "env.api('/api/v1/auth/session')",
+          "client": "apiClient"
+        }
+      ],
+      "expected_results": [
+        {
+          "kind": "status",
+          "matcher": "equals",
+          "expected": 200,
+          "evidence_refs": ["ev-reviewed-contract"],
+          "human_review_required": false
+        }
+      ],
+      "cleanup": [],
+      "evidence_refs": ["ev-reviewed-contract"],
+      "confidence": "high",
+      "human_confirmations": [],
+      "lifecycle_status": "AUTOMATABLE",
+      "automatable": true,
+      "review": {
+        "reviewer": "offline-fixture",
+        "reviewed_at": "2026-08-20T00:00:00Z",
+        "decision": "approve",
+        "notes": "Deterministic CLI integration fixture"
+      }
+    }
+  ]
+}

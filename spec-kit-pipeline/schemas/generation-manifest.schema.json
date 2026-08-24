@@ -1,14 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["schema_version", "candidate_ids", "files", "write_mode", "input_digest", "validation"],
+  "required": ["schema_version", "case_ids", "files", "write_mode", "input_digest", "lifecycle_status", "validation"],
   "properties": {
     "schema_version": {"const": "1.0"},
-    "candidate_ids": {"type": "array", "items": {"type": "string"}},
+    "case_ids": {"type": "array", "items": {"type": "string"}},
     "files": {"type": "array", "items": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).*"}},
     "write_mode": {"const": "isolated-only"},
     "input_digest": {"type": "string"},
-    "validation": {"type": "object", "required": ["schema", "path_boundary", "secret_scan"], "properties": {"schema": {"const": "PASS"}, "path_boundary": {"const": "PASS"}, "secret_scan": {"const": "PASS"}}, "additionalProperties": false}
+    "lifecycle_status": {"const": "GENERATED"},
+    "validation": {"type": "object", "required": ["schema", "path_boundary", "secret_scan", "lint", "playwright_discovery", "execution"], "properties": {"schema": {"const": "PASS"}, "path_boundary": {"const": "PASS"}, "secret_scan": {"const": "PASS"}, "lint": {"enum": ["PASS", "FAIL", "NOT_RUN"]}, "playwright_discovery": {"enum": ["PASS", "FAIL", "NOT_RUN"]}, "execution": {"enum": ["PASS", "FAIL", "NOT_RUN"]}}, "additionalProperties": false}
   },
   "additionalProperties": false
 }

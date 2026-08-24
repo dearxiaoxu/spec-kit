@@ -65,9 +65,9 @@ async function globalSetup() {
         password: env.password,
       });
       if (res.status === 200 && res.body.includes('"ok":true')) {
-        console.log(`[global-setup] 账号 ${env.username} 登录验证通过`);
+        console.log('[global-setup] 测试账号登录验证通过');
       } else {
-        throw new Error(`账号 ${env.username} 登录验证失败: HTTP ${res.status}`);
+        throw new Error(`测试账号登录验证失败: HTTP ${res.status}`);
       }
     } catch (e) {
       throw new Error(`[ENV_ERROR] 登录验证异常: ${e.message}`);

@@ -37,6 +37,8 @@ CONFIG_FILE = "config.json"
 REPORT_DIR = "report"
 
 
+# 读取配置并解析项目、Playwright、报告目录的绝对路径，同时避免路径越界
+
 def load_config() -> Dict:
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CONFIG_FILE)
     if not os.path.exists(path):
@@ -58,6 +60,7 @@ def load_config() -> Dict:
     return cfg
 
 
+# 初始化 Gate、执行 Gate，并将配置错误、环境错误、阻断错误映射为统一状态。
 def run_gate(gate_cls, config: Dict, dry_run: bool = False) -> Optional[GateResult]:
     name = gate_cls.name
     gate_cfg = (config.get("gates") or {}).get(name, {}) or {}
@@ -108,6 +111,7 @@ def git_commit(project_root: str) -> str:
         return "unknown"
 
 
+# 生成 `report/pipeline-*.json` 和 `report/pipeline-*.md`
 def write_report(results: List[GateResult], config: Dict) -> str:
     report_dir = config.get("report_dir", REPORT_DIR)
     os.makedirs(report_dir, exist_ok=True)
@@ -157,6 +161,7 @@ def write_report(results: List[GateResult], config: Dict) -> str:
     return json_path
 
 
+# 通过子进程调用 `tools/fetch_contract.py`
 def fetch_contract(config: Dict, token: str = "", auto_login: bool = False) -> None:
     """拉取目标站 OpenAPI 存为 assets/contract/current.json（委托 tools/fetch_contract.py）"""
     import subprocess
@@ -225,7 +230,8 @@ def main() -> int:
         if args.stage not in allowed:
             print(f"[FATAL] 未知阶段: {args.stage}")
             return 2
-        gates = [cls for cls in gates if args.stage in (((config.get("gates") or {}).get(cls.name, {}) or {}).get("stages", []))]
+        gates = [cls for cls in gates if
+                 args.stage in (((config.get("gates") or {}).get(cls.name, {}) or {}).get("stages", []))]
 
     results: List[GateResult] = []
     failed_any = False
