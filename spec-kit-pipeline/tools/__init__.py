@@ -1,0 +1,1 @@
+"""Reusable offline test-asset tooling for the Spec-Kit pipeline."""

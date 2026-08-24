@@ -15,7 +15,8 @@
       "snapshot_dir": "assets/contract",
       "baseline": "assets/contract/snapshot.json",
       "current": "assets/contract/current.json",
-      "schema_fallback": "assets/contract/key-contracts.json"
+      "schema_fallback": "assets/contract/key-contracts.json",
+      "module_registry": "assets/platform-modules.json"
     },
     "static_scan": {
       "enabled": true,

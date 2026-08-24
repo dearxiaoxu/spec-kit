@@ -9,7 +9,42 @@
     "authorization_scope": {"type": "object"},
     "scanner_versions": {"type": "object"},
     "target": {"type": "object", "required": ["name", "environment", "version"], "properties": {"name": {"type": "string"}, "environment": {"enum": ["production-like", "isolated", "local"]}, "version": {"type": "string"}}, "additionalProperties": false},
-    "assets": {"type": "object", "required": ["endpoints", "observed_flows", "source_rules", "tests", "unreadable"], "additionalProperties": true},
+    "assets": {
+      "type": "object",
+      "required": ["endpoints", "observed_flows", "source_rules", "tests", "unreadable"],
+      "properties": {
+        "endpoints": {"type": "array"},
+        "observed_flows": {"type": "array"},
+        "source_rules": {"type": "array"},
+        "tests": {"type": "array"},
+        "unreadable": {"type": "array"},
+        "modules": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": ["module_id", "name", "route", "spaces", "capabilities", "risk", "probe_mode", "coverage_policy", "coverage_reason", "expected_test_refs", "api_evidence_refs", "evidence_refs"],
+            "properties": {
+              "module_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+              "name": {"type": "string", "minLength": 1},
+              "route": {"type": "string", "pattern": "^/(?!.*\\.\\.).*"},
+              "spaces": {"type": "array", "minItems": 1, "items": {"enum": ["personal", "team", "admin"]}},
+              "capabilities": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+              "risk": {"enum": ["readonly", "stateful", "destructive"]},
+              "probe_mode": {"enum": ["readonly", "manual-only", "blocked"]},
+              "coverage_policy": {"enum": ["automated", "candidate", "manual-only", "blocked"]},
+              "coverage_reason": {"type": "string", "minLength": 1},
+              "expected_test_refs": {"type": "array", "items": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).*"}},
+              "api_evidence_refs": {"type": "array", "items": {"type": "string"}},
+              "existing_test_refs": {"type": "array", "items": {"type": "string"}},
+              "evidence_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "evidence": {"type": "array", "items": {"type": "object", "required": ["evidence_id", "kind", "path", "location", "content_hash", "collected_at", "redaction_status", "target_version"], "properties": {"evidence_id": {"type": "string"}, "kind": {"enum": ["contract", "har", "source", "dom", "manual"]}, "path": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).*"}, "location": {"type": "string"}, "content_hash": {"type": "string", "pattern": "^sha256:"}, "collected_at": {"type": "string", "format": "date-time"}, "redaction_status": {"enum": ["redacted", "not_required"]}, "target_version": {"type": "string"}}, "additionalProperties": true}},
     "conflicts": {"type": "array"}
   },

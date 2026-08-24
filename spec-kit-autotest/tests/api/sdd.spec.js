@@ -6,6 +6,7 @@ const { test, expect, describe } = require('../../fixtures/authFixture');
 const env = require('../../config/env');
 const { assertOk } = require('../../utils/apiClient');
 const { sddProjectData } = require('../../utils/testData');
+const { safeCleanup } = require('../../utils/resourceTracker');
 
 const API = {
   projects: (scope = 'personal') => `${env.baseURL}${env.api('/sdd/projects')}?scope=${scope}`,
@@ -54,9 +55,13 @@ describe('SDD 项目接口', () => {
 
   test('SDD项目-归档', async ({ apiClient }) => {
     const id = await createProject(apiClient);
-    const res = await apiClient.post(API.action(id, 'archive'), {});
-    const body = await res.json();
-    expect(body.ok !== undefined).toBe(true);
+    try {
+      const res = await apiClient.post(API.action(id, 'archive'), {});
+      const body = await res.json();
+      expect(body.ok !== undefined).toBe(true);
+    } finally {
+      await safeCleanup(`sdd:${id}`, () => apiClient.delete(API.projectById(id)));
+    }
   });
 
   test('SDD项目-删除', async ({ apiClient }) => {

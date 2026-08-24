@@ -17,6 +17,9 @@ SENSITIVE_TEXT = re.compile(
 PROTECTED_NAMES = {".env", ".env.local", ".auth", "storageState.json", "test-results.json"}
 SAFE_STATUS_KEYS = {"secret_scan"}
 LIFECYCLE = {"DISCOVERED", "CANDIDATE", "IN_REVIEW", "REVIEWED", "AUTOMATABLE", "GENERATED", "VALIDATED", "EXECUTED", "REJECTED", "BLOCKED", "STALE"}
+MODULE_RISKS = {"readonly", "stateful", "destructive"}
+MODULE_PROBE_MODES = {"readonly", "manual-only", "blocked"}
+MODULE_COVERAGE_POLICIES = {"automated", "candidate", "manual-only", "blocked"}
 
 class ToolError(Exception):
     """Expected user/configuration or policy error."""
@@ -132,6 +135,27 @@ def validate_asset_doc(doc: dict) -> list[str]:
         for item in group:
             for ref in item.get("evidence_refs", []):
                 if ref not in evidence_ids: errors.append(f"资产引用未知证据: {ref}")
+    modules = (doc.get("assets") or {}).get("modules")
+    if modules is not None:
+        if not isinstance(modules, list):
+            errors.append("assets.modules 必须为数组")
+            return errors
+        ids, routes = set(), set()
+        for i, module in enumerate(modules):
+            for key in ("module_id", "name", "route", "spaces", "capabilities", "risk", "probe_mode", "coverage_policy", "coverage_reason", "evidence_refs"):
+                if module.get(key) in (None, "", []): errors.append(f"assets.modules[{i}] 缺少 {key}")
+            for key in ("expected_test_refs", "api_evidence_refs"):
+                if key not in module or not isinstance(module.get(key), list):
+                    errors.append(f"assets.modules[{i}] {key} 必须为数组")
+            module_id, route = module.get("module_id"), module.get("route")
+            if module_id in ids: errors.append(f"模块 ID 重复: {module_id}")
+            if route in routes: errors.append(f"模块路由重复: {route}")
+            ids.add(module_id); routes.add(route)
+            if not isinstance(route, str) or not route.startswith("/") or ".." in Path(route.split("?", 1)[0]).parts:
+                errors.append(f"assets.modules[{i}] 路由非法")
+            if module.get("risk") not in MODULE_RISKS: errors.append(f"assets.modules[{i}] risk 非法")
+            if module.get("probe_mode") not in MODULE_PROBE_MODES: errors.append(f"assets.modules[{i}] probe_mode 非法")
+            if module.get("coverage_policy") not in MODULE_COVERAGE_POLICIES: errors.append(f"assets.modules[{i}] coverage_policy 非法")
     return errors
 
 

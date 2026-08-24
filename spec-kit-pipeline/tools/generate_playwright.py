@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 """Generate isolated Playwright skeletons from approved candidate cases."""
 from __future__ import annotations
-import argparse, json, re, sys
+
+import argparse
+import json
+import re
+import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from tools.common import ToolError, PolicyError, InputError, assert_isolated_output, digest, redact, validate_candidate_doc, validate_generation_manifest, write_json, atomic_write
+from tools.common import (
+    InputError,
+    PolicyError,
+    ToolError,
+    assert_isolated_output,
+    atomic_write,
+    digest,
+    redact,
+    validate_candidate_doc,
+    validate_generation_manifest,
+    write_json,
+)
 
 SECRET = re.compile(r"(?i)(password|token|secret|authorization|cookie|api[_-]?key)\s*[:=]")
 

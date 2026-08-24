@@ -71,12 +71,21 @@ class GovernanceTests(unittest.TestCase):
         )
         self.assertIn("removed_endpoint", changes[0])
 
+    def test_module_coverage_gate_accepts_reviewed_fourteen_module_registry(self):
+        config = {"project_root": str(PIPELINE_ROOT), "autotest_dir": str(PIPELINE_ROOT.parent / "spec-kit-autotest"),
+                  "gates": {"contract_diff": {"module_registry": "assets/platform-modules.json"}}}
+        gate = ContractDiffGate(config, {})
+        gate.init()
+        metrics, issues = gate._module_coverage(gate.module_registry)
+        self.assertEqual(metrics["modules"], 14)
+        self.assertEqual(metrics["module_missing"], 0)
+        self.assertFalse(issues)
+
     def test_load_config_resolves_project_paths(self):
         config = pipeline.load_config()
         self.assertTrue(Path(config["project_root"]).is_absolute())
         self.assertTrue(Path(config["autotest_dir"]).is_absolute())
         self.assertTrue(Path(config["report_dir"]).is_absolute())
-
     def test_report_redaction_hides_credentials(self):
         value = redact_sensitive("password=secret token:abc Authorization=Bearer.xyz")
         self.assertNotIn("secret", value)

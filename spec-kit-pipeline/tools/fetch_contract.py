@@ -19,9 +19,16 @@ import sys
 import urllib.request
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import load_config  # noqa: E402
-from tools.common import ToolError, atomic_write, digest, redact  # noqa: E402
+PIPELINE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PIPELINE_ROOT not in sys.path:
+    sys.path.insert(0, PIPELINE_ROOT)
+
+if __package__ in (None, ""):
+    from tools.common import ToolError, atomic_write, digest, redact
+else:
+    from .common import ToolError, atomic_write, digest, redact
+
+from pipeline import load_config
 
 CONTRACT_DIR = "assets/contract"
 

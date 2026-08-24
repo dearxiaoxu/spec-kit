@@ -30,6 +30,8 @@ class ContractDiffGate(Gate):
         cfg = self.gate_cfg
         self.workdir = self.config.get("project_root", ".")
         self.snapshot_dir = os.path.join(self.workdir, cfg.get("snapshot_dir", "assets/contract"))
+        module_registry = cfg.get("module_registry", "assets/platform-modules.json")
+        self.module_registry = module_registry if os.path.isabs(module_registry) else os.path.join(self.workdir, module_registry)
         os.makedirs(self.snapshot_dir, exist_ok=True)
 
     # ---- 数据加载 ----
@@ -97,14 +99,63 @@ class ContractDiffGate(Gate):
                     with open(os.path.join(root, filename), "r", encoding="utf-8", errors="ignore") as handle:
                         source += handle.read()
         missing = [c.get("endpoint", "?") for c in contracts if c.get("path") not in source]
+        module_metrics, module_issues = self._module_coverage(self.module_registry)
+        issues = [f"缺少关键契约覆盖: {item}" for item in missing] + module_issues
         return GateResult(
             name=self.name,
-            passed=not missing,
+            passed=not issues,
             blocking=self.blocking,
-            detail=f"Schema 兜底契约 {len(contracts)} 项，本地自动化覆盖缺失 {len(missing)} 项",
-            issues=[f"缺少关键契约覆盖: {item}" for item in missing],
-            metrics={"mode": "schema_fallback", "contracts": len(contracts), "missing": len(missing)},
+            detail=(f"Schema 兜底契约 {len(contracts)} 项，API 覆盖缺失 {len(missing)} 项；"
+                    f"模块面 {module_metrics['modules']} 项，覆盖声明缺失 {module_metrics['module_missing']} 项"),
+            issues=issues,
+            metrics={"mode": "schema_fallback", "contracts": len(contracts), "missing": len(missing), **module_metrics},
         )
+
+    def _module_coverage(self, path: str):
+        """Validate module registry completeness and policy-specific coverage evidence."""
+        registry = self._load_json(path)
+        modules = registry.get("modules") or []
+        if not modules:
+            raise GateSetupError(f"平台模块注册表为空: {path}")
+        autotest_dir = self.config.get("autotest_dir", "")
+        counts = {"automated": 0, "candidate": 0, "manual-only": 0, "blocked": 0}
+        issues, seen_ids, seen_routes = [], set(), set()
+        for index, module in enumerate(modules):
+            module_id = module.get("module_id") or f"index-{index}"
+            route = module.get("route")
+            policy = module.get("coverage_policy")
+            reason = str(module.get("coverage_reason") or "").strip()
+            if module_id in seen_ids:
+                issues.append(f"模块 ID 重复: {module_id}")
+            if route in seen_routes:
+                issues.append(f"模块路由重复: {route}")
+            seen_ids.add(module_id); seen_routes.add(route)
+            if policy not in counts:
+                issues.append(f"模块 {module_id} coverage_policy 非法: {policy}")
+                continue
+            counts[policy] += 1
+            if policy == "automated":
+                refs = module.get("expected_test_refs") or []
+                if not refs:
+                    issues.append(f"自动化模块 {module_id} 未声明 expected_test_refs")
+                for ref in refs:
+                    candidate = os.path.normpath(os.path.join(autotest_dir, ref))
+                    test_root = os.path.abspath(os.path.join(autotest_dir, "tests"))
+                    if os.path.commonpath([os.path.abspath(candidate), test_root]) != test_root:
+                        issues.append(f"模块 {module_id} 测试引用越界: {ref}")
+                    elif not os.path.isfile(candidate):
+                        issues.append(f"模块 {module_id} 缺少自动化覆盖文件: {ref}")
+            elif not reason:
+                issues.append(f"模块 {module_id} 的 {policy} 策略缺少 coverage_reason")
+        metrics = {
+            "modules": len(modules),
+            "module_automated": counts["automated"],
+            "module_candidate": counts["candidate"],
+            "module_manual_only": counts["manual-only"],
+            "module_blocked": counts["blocked"],
+            "module_missing": len(issues),
+        }
+        return metrics, issues
 
     def run(self) -> GateResult:
         cfg = self.gate_cfg
@@ -145,7 +196,9 @@ class ContractDiffGate(Gate):
             issues.append(info_diff)
         issues.extend(changes)
 
-        passed = len(breaking) == 0
+        module_metrics, module_issues = self._module_coverage(self.module_registry)
+        issues.extend(module_issues)
+        passed = len(breaking) == 0 and not module_issues
         detail = (
             f"变更 {len(changes)} 项（破坏性 {len(breaking)} / 非破坏性 {len(non_breaking)}）"
             if changes
@@ -153,6 +206,7 @@ class ContractDiffGate(Gate):
         )
         if info_diff:
             detail += f"；{info_diff}"
+        detail += f"；模块面 {module_metrics['modules']} 项，覆盖声明缺失 {module_metrics['module_missing']} 项"
 
         return GateResult(
             name=self.name,
@@ -165,5 +219,6 @@ class ContractDiffGate(Gate):
                 "cur_endpoints": len(cur_set["endpoints"]),
                 "breaking": len(breaking),
                 "non_breaking": len(non_breaking),
+                **module_metrics,
             },
         )

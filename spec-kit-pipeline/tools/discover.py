@@ -7,12 +7,32 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 from urllib.parse import parse_qsl, urlsplit
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from tools.common import (InputError, ToolError, assert_isolated_output, assert_within, digest,
-                          file_digest, redact, relative_posix, validate_asset_doc,
-                          write_json, atomic_write, utc_now)
+if TYPE_CHECKING:
+    from .common import (InputError, ToolError, assert_isolated_output, assert_within, digest,
+                         file_digest, redact, relative_posix, validate_asset_doc,
+                         write_json, atomic_write, utc_now)
+
+if __name__ == "__main__":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from tools import common as _common
+else:
+    from . import common as _common
+
+InputError = _common.InputError
+ToolError = _common.ToolError
+assert_isolated_output = _common.assert_isolated_output
+assert_within = _common.assert_within
+digest = _common.digest
+file_digest = _common.file_digest
+redact = _common.redact
+relative_posix = _common.relative_posix
+validate_asset_doc = _common.validate_asset_doc
+write_json = _common.write_json
+atomic_write = _common.atomic_write
+utc_now = _common.utc_now
 
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options"}
 SKIP_DIRS = {".git", "node_modules", ".tools", "reports", "report", "test-results", "__pycache__"}
@@ -47,11 +67,17 @@ def schema_summary(schema):
     return result
 
 
-def parse_contract(path: Path, root: Path, assets, evidence_list, conflicts, target_version="unknown"):
+def load_json(path: Path, root: Path, assets):
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         assets["unreadable"].append({"path": relative_posix(path, root), "reason": str(exc)})
+        return None
+
+
+def parse_contract(path: Path, root: Path, assets, evidence_list, target_version="unknown"):
+    data = load_json(path, root, assets)
+    if data is None:
         return
     rel = relative_posix(path, root)
     if "paths" in data:
@@ -93,6 +119,32 @@ def parse_contract(path: Path, root: Path, assets, evidence_list, conflicts, tar
         })
 
 
+def parse_module_registry(path: Path, root: Path, assets, evidence_list, target_version="unknown"):
+    """Load the reviewed UI module registry as evidence-backed discovery assets."""
+    data = load_json(path, root, assets)
+    if data is None:
+        return
+    modules = data.get("modules")
+    if not isinstance(modules, list):
+        assets["unreadable"].append({"path": relative_posix(path, root), "reason": "modules 必须为数组"})
+        return
+    rel = relative_posix(path, root)
+    sha = file_digest(path)
+    allowed = {
+        "module_id", "name", "route", "spaces", "capabilities", "risk", "probe_mode",
+        "coverage_policy", "coverage_reason", "expected_test_refs", "api_evidence_refs",
+    }
+    for index, raw in enumerate(modules):
+        if not isinstance(raw, dict):
+            assets["unreadable"].append({"path": rel, "reason": f"modules[{index}] 必须为对象"})
+            continue
+        ev = evidence("manual", rel, f"/modules/{index}", content_hash=sha, target_version=target_version)
+        evidence_list.append(ev)
+        module = {key: raw[key] for key in allowed if key in raw}
+        module["evidence_refs"] = [ev["evidence_id"]]
+        assets["modules"].append(module)
+
+
 def response_shape(value, depth=0):
     if depth > 2: return "object"
     if isinstance(value, dict): return {str(k): response_shape(v, depth + 1) for k, v in sorted(value.items())}
@@ -102,9 +154,8 @@ def response_shape(value, depth=0):
 
 
 def parse_har(path: Path, root: Path, assets, evidence_list, target_version="unknown"):
-    try: data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        assets["unreadable"].append({"path": relative_posix(path, root), "reason": str(exc)})
+    data = load_json(path, root, assets)
+    if data is None:
         return
     rel = relative_posix(path, root)
     entries = ((data.get("log") or {}).get("entries") or [])
@@ -149,14 +200,20 @@ def build(args):
     if not root.exists(): raise InputError(f"root 不存在: {root}")
     output = Path(args.out_dir).resolve()
     assert_isolated_output(output, pipeline_root, [autotest_root / "tests", pipeline_root / "tests"])
-    assets = {"endpoints": [], "observed_flows": [], "source_rules": [], "tests": [], "unreadable": []}; evidence_list=[]; conflicts=[]
+    assets = {"endpoints": [], "observed_flows": [], "source_rules": [], "tests": [], "unreadable": [], "modules": []}; evidence_list=[]
+    module_registry = Path(args.module_registry).resolve() if args.module_registry else pipeline_root / "assets" / "platform-modules.json"
+    if module_registry.exists():
+        assert_within(module_registry, root, "模块注册表")
+        parse_module_registry(module_registry, root, assets, evidence_list, args.version)
+    elif args.module_registry:
+        raise InputError(f"模块注册表不存在: {module_registry}")
     contracts = [Path(p).resolve() for p in args.contract]
     if not contracts:
         default = pipeline_root / "assets/contract/current.json"
         if default.exists(): contracts = [default]
     for path in contracts:
         assert_within(path, root, "契约输入")
-        parse_contract(path, root, assets, evidence_list, conflicts, args.version)
+        parse_contract(path, root, assets, evidence_list, args.version)
     for path in map(Path, args.har):
         path = path.resolve(); assert_within(path, root, "HAR 输入"); parse_har(path, root, assets, evidence_list, args.version)
     source_paths = [Path(p).resolve() for p in args.source_dir]
@@ -170,7 +227,13 @@ def build(args):
                 if path.is_file() and not any(part in SKIP_DIRS for part in path.parts): scan_source(path, root, assets, evidence_list, args.version)
     for endpoint in assets["endpoints"]:
         endpoint["existing_test_refs"] = [test["path"] for test in assets["tests"] if endpoint["path"] in " ".join(test.get("covered_paths", []))]
-    doc = {"schema_version": "1.0", "scan_run_id": args.run_id, "created_at": utc_now(), "authorization_scope": {"root": str(root), "mode": "offline-read-only"}, "scanner_versions": {"discover": "2.0"}, "target": {"name": "spec-kit", "environment": args.environment, "version": args.version}, "assets": assets, "evidence": evidence_list, "conflicts": conflicts, "summary": {k: len(v) for k,v in assets.items()}}
+    known_tests = {test["path"] for test in assets["tests"]}
+    for module in assets["modules"]:
+        module["existing_test_refs"] = [
+            ref for ref in module.get("expected_test_refs", [])
+            if any(path == ref or path.endswith(f"/{ref}") for path in known_tests)
+        ]
+    doc = {"schema_version": "1.0", "scan_run_id": args.run_id, "created_at": utc_now(), "authorization_scope": {"root": str(root), "mode": "offline-read-only"}, "scanner_versions": {"discover": "2.1"}, "target": {"name": "spec-kit", "environment": args.environment, "version": args.version}, "assets": assets, "evidence": evidence_list, "conflicts": [], "summary": {k: len(v) for k,v in assets.items()}}
     return doc, output
 
 
@@ -183,6 +246,12 @@ def markdown(doc):
         lines.append(f"- risk: `{item['side_effect']}`; confidence: `{item['confidence']}`")
         lines.append(f"- responses: `{', '.join(item['responses']) or 'unknown'}`")
         lines.append(f"- evidence: `{', '.join(item['evidence_refs'])}`")
+    lines += ["", "## Platform Modules", ""]
+    for item in doc["assets"].get("modules", []):
+        lines.append(f"### {item['name']} (`{item['module_id']}`)")
+        lines.append(f"- route: `{item['route']}`; policy: `{item['coverage_policy']}`; risk: `{item['risk']}`")
+        lines.append(f"- existing tests: `{', '.join(item.get('existing_test_refs', [])) or 'none'}`")
+        lines.append(f"- reason: {item['coverage_reason']}")
     lines += ["", "## Existing Tests", ""]
     for item in doc["assets"]["tests"]: lines.append(f"- `{item['path']}`: {', '.join(item['titles']) or 'untitled'}")
     if doc["assets"]["unreadable"]: lines += ["", "## Unreadable", ""] + [f"- `{x['path']}`: {x['reason']}" for x in doc["assets"]["unreadable"]]
@@ -193,6 +262,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="离线扫描契约、HAR、源码和 Playwright 测试资产")
     parser.add_argument("--root", default="."); parser.add_argument("--pipeline-root", default="."); parser.add_argument("--autotest-root", required=True)
     parser.add_argument("--contract", action="append", default=[]); parser.add_argument("--har", action="append", default=[]); parser.add_argument("--source-dir", action="append", default=[])
+    parser.add_argument("--module-registry", help="平台模块注册表 JSON；默认使用 assets/platform-modules.json")
     parser.add_argument("--out-dir", required=True); parser.add_argument("--run-id", default="scan-local"); parser.add_argument("--environment", default="isolated"); parser.add_argument("--version", default="unknown")
     parser.add_argument("--validate", action="store_true"); parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
