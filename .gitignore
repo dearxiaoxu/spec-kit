@@ -35,3 +35,6 @@ spec-kit-pipeline/.pipeline-cache/
 # IDE
 .idea/
 .vscode/
+
+# Codex isolated worktrees
+.worktrees/
